@@ -11,6 +11,16 @@ public class Person {
     private String fullNameInstagram;
     private String profilePictureInstagram;
 
+    public Person() {
+    }
+
+    public Person(int id, String usernameInstagram, String fullNameInstagram, String profilePictureInstagram) {
+        this.id = id;
+        this.usernameInstagram = usernameInstagram;
+        this.fullNameInstagram = fullNameInstagram;
+        this.profilePictureInstagram = profilePictureInstagram;
+    }
+
     public int getId() {
         return id;
     }

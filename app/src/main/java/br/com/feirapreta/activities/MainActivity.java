@@ -1,24 +1,26 @@
 package br.com.feirapreta.activities;
 
-import android.os.Handler;
-import android.support.design.widget.TabLayout;
+import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
+import android.view.View;
+
+import com.facebook.drawee.backends.pipeline.Fresco;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import br.com.feirapreta.R;
 import br.com.feirapreta.adapter.HighlightsAdapter;
-import br.com.feirapreta.model.Highlight;
-import br.com.feirapreta.model.HighlightService;
+import br.com.feirapreta.model.Person;
+import br.com.feirapreta.model.Post;
 import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MainActivity extends AppCompatActivity {
+
+    private List<Post> highlights = new ArrayList<>();
 
     private RecyclerView recyclerView;
     private RecyclerView.Adapter highlightsAdapter;
@@ -27,26 +29,23 @@ public class MainActivity extends AppCompatActivity {
     //TAG DO ERRO
     public static final String TAG = "DEU ERRO";
 
+    //TOKEN AUTENTICAÇÂO
+    private static final String TOKEN = "OTOKENFICAAQUI";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Fresco.initialize(this);
 
-        recyclerView = findViewById(R.id.recyclerview);
+        loadHighlights();
+        loadRVHighlights();
 
-        recyclerView.setHasFixedSize(true);
-
-        layoutManager = new GridLayoutManager(this, 2);
-        recyclerView.setLayoutManager(layoutManager);
-
-        String data[] = {"@teste1", "@teste2", "@teste3", "@teste4", "@teste5", "@teste6", "@teste7", "@teste8"};
-
-        highlightsAdapter = new HighlightsAdapter(data);
-        recyclerView.setAdapter(highlightsAdapter);
+        //SharedPreferences preferences = getSharedPreferences(getString(R.string.token), 0);
 
 
-        //Aqui eu crio a classe e a variavel do retrofit e eu vou mandar a url base que foi
+
+        /*//Aqui eu crio a classe e a variavel do retrofit e eu vou mandar a url base que foi
         //chamada neste caso no highlightService então eu vou no highlight e pego ela
         //no addconverter vou transformar tudo em GSON
         // e dps tudo isso vai ser retornado
@@ -92,10 +91,42 @@ public class MainActivity extends AppCompatActivity {
                 //Mensagem caso de errado
                 Log.e(TAG,"ERRO: " + t.getMessage());
             }
-        });
+        });*/
 
 
 
+
+    }
+
+    private void loadRVHighlights(){
+
+        recyclerView = findViewById(R.id.recyclerview);
+
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setItemViewCacheSize(20);
+        recyclerView.setDrawingCacheEnabled(true);
+        recyclerView.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
+
+        layoutManager = new GridLayoutManager(this, 2);
+        recyclerView.setLayoutManager(layoutManager);
+
+        highlightsAdapter = new HighlightsAdapter(highlights);
+        recyclerView.setAdapter(highlightsAdapter);
+
+    }
+
+    private void loadHighlights(){
+        
+
+        Person user = new Person(1, "@teste", "Nome Completo", "imageURL");
+        Post post = new Post(1, "https://www.instagram.com/antoniorib_/", true, "imageLowRes", "https://scontent.cdninstagram.com/vp/f075f763e093c53e2833b118425de020/5B414180/t51.2885-15/e35/p320x320/22581982_1359592954187449_120325497367298048_n.jpg", "", "", user);
+
+        highlights.add(post);
+        highlights.add(post);
+        highlights.add(post);
+        highlights.add(post);
+        highlights.add(post);
+        highlights.add(post);
 
     }
 
