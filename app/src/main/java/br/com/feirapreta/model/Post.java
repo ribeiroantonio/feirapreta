@@ -1,12 +1,12 @@
 package br.com.feirapreta.model;
 
 /**
- * Created by WEB on 28/02/2018.
+ * Created by Antonio Ribeiro on 28/02/2018.
  */
 
 public class Post {
 
-    private int id;
+    private String id;
     private String link;
     private boolean isHighlight;
     private String imageLowResolution;
@@ -18,7 +18,7 @@ public class Post {
     public Post() {
     }
 
-    public Post(int id, String link, boolean isHighlight, String imageLowResolution, String imageThumbnail, String imageStandardResolution, String subtitle, Person person) {
+    public Post(String id, String link, boolean isHighlight, String imageLowResolution, String imageThumbnail, String imageStandardResolution, String subtitle, Person person) {
         this.id = id;
         this.link = link;
         this.isHighlight = isHighlight;
@@ -29,11 +29,11 @@ public class Post {
         this.person = person;
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 

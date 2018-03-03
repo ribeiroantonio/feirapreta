@@ -1,7 +1,7 @@
 package br.com.feirapreta.model;
 
 /**
- * Created by WEB on 28/02/2018.
+ * Created by Antonio Ribeiro on 28/02/2018.
  */
 
 public class Person {

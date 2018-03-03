@@ -11,40 +11,21 @@ import android.widget.TextView;
 
 import com.facebook.drawee.view.SimpleDraweeView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import br.com.feirapreta.R;
 import br.com.feirapreta.model.Post;
 
 /**
- * Created by WEB on 28/02/2018.
+ * Created by Antonio Ribeiro on 28/02/2018.
  */
 
 public class HighlightsAdapter extends RecyclerView.Adapter<HighlightsAdapter.ViewHolder> {
 
-    private static List<Post> highlights;
+    private static ArrayList<Post> highlights;
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
-
-        public View view;
-        public TextView userIdTextView;
-        SimpleDraweeView thumbImageView;
-
-        public ViewHolder(View v) {
-            super(v);
-            userIdTextView = v.findViewById(R.id.card_highlights_userId);
-            thumbImageView = v.findViewById(R.id.card_highlights_image);
-            view = v;
-            view.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                   view.getContext().startActivity(newInstagramPostIntent(view.getContext().getPackageManager(), highlights.get(getAdapterPosition()).getLink()));
-                }
-            });
-        }
-    }
-
-    public HighlightsAdapter(List<Post> highlights){
+    public HighlightsAdapter(ArrayList<Post> highlights){
         this.highlights = highlights;
     }
 
@@ -57,10 +38,10 @@ public class HighlightsAdapter extends RecyclerView.Adapter<HighlightsAdapter.Vi
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        String userId = highlights.get(position).getPerson().getUsernameInstagram();
-        holder.userIdTextView.setText(userId);
+        //String userId = highlights.get(position).getPerson().getUsernameInstagram();
+        holder.userIdTextView.setText("@teste");
         /*Picasso.with(holder.view.getContext()).load(highlights.get(position).getPost().getImageThumbnail()).fit().into(holder.thumbImageView);*/
-        Uri image = Uri.parse(highlights.get(position).getImageThumbnail());
+        Uri image = Uri.parse(highlights.get(position).getImageLowResolution());
         holder.thumbImageView.setImageURI(image);
     }
 
@@ -69,6 +50,25 @@ public class HighlightsAdapter extends RecyclerView.Adapter<HighlightsAdapter.Vi
         return highlights.size();
     }
 
+    public static class ViewHolder extends RecyclerView.ViewHolder {
+
+        public View view;
+        public TextView userIdTextView;
+        SimpleDraweeView thumbImageView;
+
+        public ViewHolder(View v) {
+            super(v);
+            userIdTextView = v.findViewById(R.id.card_highlights_userId);
+            thumbImageView = v.findViewById(R.id.card_highlights_image);
+            view = v;
+            /*view.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    view.getContext().startActivity(newInstagramPostIntent(view.getContext().getPackageManager(), highlights.get(getAdapterPosition()).getLink()));
+                }
+            });*/
+        }
+    }
 
     public static Intent newInstagramPostIntent(PackageManager pm, String url){
 
