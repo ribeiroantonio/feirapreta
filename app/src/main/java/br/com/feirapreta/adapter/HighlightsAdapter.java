@@ -24,6 +24,7 @@ import br.com.feirapreta.model.Post;
 public class HighlightsAdapter extends RecyclerView.Adapter<HighlightsAdapter.ViewHolder> {
 
     private static ArrayList<Post> highlights;
+    private static Intent intent = new Intent(Intent.ACTION_VIEW);
 
     public HighlightsAdapter(ArrayList<Post> highlights){
         this.highlights = highlights;
@@ -38,8 +39,8 @@ public class HighlightsAdapter extends RecyclerView.Adapter<HighlightsAdapter.Vi
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        //String userId = highlights.get(position).getPerson().getUsernameInstagram();
-        holder.userIdTextView.setText("@teste");
+        String userId = "@" + highlights.get(position).getPerson().getUsernameInstagram();
+        holder.userIdTextView.setText(userId);
         /*Picasso.with(holder.view.getContext()).load(highlights.get(position).getPost().getImageThumbnail()).fit().into(holder.thumbImageView);*/
         Uri image = Uri.parse(highlights.get(position).getImageLowResolution());
         holder.thumbImageView.setImageURI(image);
@@ -61,18 +62,17 @@ public class HighlightsAdapter extends RecyclerView.Adapter<HighlightsAdapter.Vi
             userIdTextView = v.findViewById(R.id.card_highlights_userId);
             thumbImageView = v.findViewById(R.id.card_highlights_image);
             view = v;
-            /*view.setOnClickListener(new View.OnClickListener() {
+            view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     view.getContext().startActivity(newInstagramPostIntent(view.getContext().getPackageManager(), highlights.get(getAdapterPosition()).getLink()));
                 }
-            });*/
+            });
         }
     }
 
     public static Intent newInstagramPostIntent(PackageManager pm, String url){
 
-        final Intent intent = new Intent(Intent.ACTION_VIEW);
         try{
             if(pm.getPackageInfo("com.instagram.android", 0) != null){
                 if(url.endsWith("/")){

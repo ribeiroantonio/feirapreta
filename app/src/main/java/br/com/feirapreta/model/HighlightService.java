@@ -12,7 +12,7 @@ import retrofit2.http.GET;
 
 public interface HighlightService {
     //Escreve aqui o IP que estará o back
-    String BASE_URL="HIDDEN";
+    String BASE_URL="http://feirapreta-001-site1.ctempurl.com/api/";
 
     //Aqui fica definido o metodo que sera feito no highlight
     // no @GET () entre parenteses coloca o final do ip por exemplo o i /highlights para pegar os highlights

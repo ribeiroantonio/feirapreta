@@ -1,11 +1,13 @@
 package br.com.feirapreta.activities;
 
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import com.facebook.drawee.backends.pipeline.Fresco;
 
@@ -15,6 +17,7 @@ import java.util.Arrays;
 import br.com.feirapreta.R;
 import br.com.feirapreta.adapter.HighlightsAdapter;
 import br.com.feirapreta.model.HighlightService;
+import br.com.feirapreta.model.Person;
 import br.com.feirapreta.model.Post;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -28,6 +31,7 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<Post> highlights;
     private RecyclerView.Adapter highlightsAdapter;
     private RecyclerView.LayoutManager layoutManager;
+    private SwipeRefreshLayout swipeRefreshLayout;
 
     //TAG DO ERRO
     public static final String TAG = "DEU ERRO";
@@ -54,10 +58,28 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
         layoutManager = new GridLayoutManager(this, 2);
         recyclerView.setLayoutManager(layoutManager);
+        highlights = new ArrayList<>();
+        highlights.add(new Post("", "", true, "", "", "", "", new Person("", "carregando...", "", "")));
+        highlights.add(highlights.get(0));
+        highlights.add(highlights.get(0));
+        highlights.add(highlights.get(0));
+        highlights.add(highlights.get(0));
+        highlights.add(highlights.get(0));
+        highlightsAdapter = new HighlightsAdapter(highlights);
+        recyclerView.setAdapter(highlightsAdapter);
         loadHighlights();
+
+        swipeRefreshLayout = findViewById(R.id.swipeRefreshHomeScreen);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                loadHighlights();
+            }
+        });
     }
 
     private void loadHighlights(){
+
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(HighlightService.BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
@@ -72,12 +94,14 @@ public class MainActivity extends AppCompatActivity {
                 highlights = response.body();
                 highlightsAdapter = new HighlightsAdapter(highlights);
                 recyclerView.setAdapter(highlightsAdapter);
+                swipeRefreshLayout.setRefreshing(false);
 
             }
 
             @Override
             public void onFailure(Call<ArrayList<Post>> call, Throwable t) {
-                Log.e(TAG, "Mensagem de erro:" + t.getMessage());
+                swipeRefreshLayout.setRefreshing(false);
+                Toast.makeText(MainActivity.this, "Houve um erro ao tentar se conectar com os nossos servidores!", Toast.LENGTH_SHORT).show();
             }
         });
     }

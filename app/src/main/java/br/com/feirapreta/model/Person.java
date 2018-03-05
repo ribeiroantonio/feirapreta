@@ -6,7 +6,7 @@ package br.com.feirapreta.model;
 
 public class Person {
 
-    private int id;
+    private String id;
     private String usernameInstagram;
     private String fullNameInstagram;
     private String profilePictureInstagram;
@@ -14,18 +14,18 @@ public class Person {
     public Person() {
     }
 
-    public Person(int id, String usernameInstagram, String fullNameInstagram, String profilePictureInstagram) {
+    public Person(String id, String usernameInstagram, String fullNameInstagram, String profilePictureInstagram) {
         this.id = id;
         this.usernameInstagram = usernameInstagram;
         this.fullNameInstagram = fullNameInstagram;
         this.profilePictureInstagram = profilePictureInstagram;
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 
