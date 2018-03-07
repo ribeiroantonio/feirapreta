@@ -90,12 +90,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                 @Override
                 public void onFailure(Call<ArrayList<Post>> call, Throwable t) {
-                    Toast.makeText(MainActivity.this, "Houve um erro ao tentar se conectar com os nossos servidores!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, R.string.server_error_message, Toast.LENGTH_SHORT).show();
                 }
             });
 
         }else{
-            Toast.makeText(this, "Verifique sua conexão com a Internet", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.connection_error_message, Toast.LENGTH_SHORT).show();
         }
 
         if(swipeRefreshLayout != null){

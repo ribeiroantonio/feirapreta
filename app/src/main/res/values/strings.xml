@@ -2,5 +2,9 @@
     <string name="app_name">Feira Preta</string>
 
     <string name="token">OTOKENFICAAQUI</string>
+    <string name="searchbar_hint">Buscar...</string>
+    <string name="tabs_highlights">Destaques</string>
+    <string name="server_error_message">Houve um erro ao tentar se conectar com os nossos servidores!</string>
+    <string name="connection_error_message">Verifique sua conexão com a Internet</string>
 
 </resources>
