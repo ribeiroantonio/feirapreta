@@ -5,7 +5,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/backgroundWhite"
-    tools:context="br.com.feirapreta.activities.MainActivity">
+    tools:context="br.com.feirapreta.activities.MainActivity"
+    android:descendantFocusability="beforeDescendants"
+    android:focusableInTouchMode="true">
 
     <android.support.design.widget.CoordinatorLayout
         android:layout_width="match_parent"
@@ -21,23 +23,28 @@
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
+                android:layout_height="65dp"
                 android:layout_marginEnd="6dp"
                 android:layout_marginRight="6dp"
                 android:background="@color/backgroundWhite"
                 app:layout_scrollFlags="scroll|enterAlways|snap">
 
                 <EditText
-                    android:id="@+id/btn_Shap"
+                    android:id="@+id/editText_search"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_margin="10dp"
                     android:background="@drawable/shape"
                     android:drawableLeft="@mipmap/ic_search_black_24dp"
+                    android:drawableStart="@mipmap/ic_search_black_24dp"
+
+                    android:drawableEnd="@mipmap/ic_more_vert_black_24dp"
                     android:drawableRight="@mipmap/ic_more_vert_black_24dp"
 
                     android:drawableTint="@color/grey"
-                    android:enabled="false"
+                    android:enabled="true"
+
+                    android:imeOptions="actionSearch"
 
                     android:hint=" Buscar..."
                     android:inputType="text"
@@ -73,7 +80,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:scrollbars="vertical"
-                app:layout_behavior="@string/appbar_scrolling_view_behavior">
+                app:layout_behavior="@string/appbar_scrolling_view_behavior"
+                >
+
 
             </android.support.v7.widget.RecyclerView>
 
@@ -82,15 +91,3 @@
     </android.support.design.widget.CoordinatorLayout>
 
 </android.support.constraint.ConstraintLayout>
-
-    <!--<EditText
-            android:padding="5dp"
-            android:layout_margin="10dp"
-            android:id="@+id/btn_Shap"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint=" Buscar..."
-
-            android:background="@drawable/shape"
-            android:inputType="text"
-            />-->

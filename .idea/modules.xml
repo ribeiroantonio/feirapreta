@@ -3,7 +3,9 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/FeiraPreta.iml" filepath="$PROJECT_DIR$/FeiraPreta.iml" />
+      <module fileurl="file://C:\Users\WEB\Documents\Antonio Ribeiro\Github\FeiraPreta\FeiraPreta\FeiraPreta.iml" filepath="C:\Users\WEB\Documents\Antonio Ribeiro\Github\FeiraPreta\FeiraPreta\FeiraPreta.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://C:\Users\WEB\Documents\Antonio Ribeiro\Github\FeiraPreta\FeiraPreta\app\app.iml" filepath="C:\Users\WEB\Documents\Antonio Ribeiro\Github\FeiraPreta\FeiraPreta\app\app.iml" />
     </modules>
   </component>
 </project>
