@@ -41,7 +41,6 @@ public class HighlightsAdapter extends RecyclerView.Adapter<HighlightsAdapter.Vi
     public void onBindViewHolder(ViewHolder holder, int position) {
         String userId = "@" + highlights.get(position).getPerson().getUsernameInstagram();
         holder.userIdTextView.setText(userId);
-        /*Picasso.with(holder.view.getContext()).load(highlights.get(position).getPost().getImageThumbnail()).fit().into(holder.thumbImageView);*/
         Uri image = Uri.parse(highlights.get(position).getImageLowResolution());
         holder.thumbImageView.setImageURI(image);
     }
