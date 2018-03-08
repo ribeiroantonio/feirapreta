@@ -21,6 +21,6 @@ public interface RetrofitService {
     @GET("publication")
     Call<ArrayList<Post>> listHighlight();
 
-    @POST("endpoint")
-    Call<ArrayList<Post>> searchByTag(@Field("tag") String tag);
+    @POST("publication/search/")
+    Call<ArrayList<Post>> searchByTag(@Field("search") String tag);
 }

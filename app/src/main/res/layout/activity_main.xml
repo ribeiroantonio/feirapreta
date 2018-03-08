@@ -47,6 +47,7 @@
                     android:imeOptions="actionSearch"
 
                     android:hint="@string/searchbar_hint"
+                    android:textColor="@color/grey"
                     android:inputType="text"
                     android:padding="5dp" />
 

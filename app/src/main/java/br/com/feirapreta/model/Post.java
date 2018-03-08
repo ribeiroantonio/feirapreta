@@ -18,6 +18,10 @@ public class Post {
     public Post() {
     }
 
+    public Post(String imageLowResolution) {
+        this.imageLowResolution = imageLowResolution;
+    }
+
     public Post(String id, String link, boolean isHighlight, String imageLowResolution, String imageThumbnail, String imageStandardResolution, String subtitle, Person person) {
         this.id = id;
         this.link = link;

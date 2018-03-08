@@ -1,5 +1,6 @@
 package br.com.feirapreta.activities;
 
+import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -28,7 +29,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener{
+public class MainActivity extends AppCompatActivity{
 
     private RecyclerView recyclerView;
     private ArrayList<Post> highlights;
@@ -36,6 +37,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private RecyclerView.LayoutManager layoutManager;
     private SwipeRefreshLayout swipeRefreshLayout;
     private EditText editTextSearch;
+    private String searchedText;
 
     //TOKEN AUTENTICAÇÂO
     private static final String TOKEN = "OTOKENFICAAQUI";
@@ -118,7 +120,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
                 if (i == EditorInfo.IME_ACTION_SEARCH) {
-                    Toast.makeText(MainActivity.this, "OEEEEEE", Toast.LENGTH_SHORT).show();
+                    searchedText = editTextSearch.getText().toString();
+                    Intent intent = new Intent(MainActivity.this, SearchResultsActivity.class);
+                    intent.putExtra("searchedText", searchedText);
+                    startActivity(intent);
                     return true;
                 }
                 return false;
@@ -141,8 +146,4 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         recyclerView.setAdapter(highlightsAdapter);
     }
 
-    @Override
-    public void onClick(View view) {
-
-    }
 }
