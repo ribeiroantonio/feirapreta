@@ -10,15 +10,17 @@ public class Person {
     private String usernameInstagram;
     private String fullNameInstagram;
     private String profilePictureInstagram;
+    private String phoneNumber;
 
     public Person() {
     }
 
-    public Person(String id, String usernameInstagram, String fullNameInstagram, String profilePictureInstagram) {
+    public Person(String id, String usernameInstagram, String fullNameInstagram, String profilePictureInstagram, String phoneNumber) {
         this.id = id;
         this.usernameInstagram = usernameInstagram;
         this.fullNameInstagram = fullNameInstagram;
         this.profilePictureInstagram = profilePictureInstagram;
+        this.phoneNumber = phoneNumber;
     }
 
     public String getId() {
@@ -51,5 +53,13 @@ public class Person {
 
     public void setProfilePictureInstagram(String profilePictureInstagram) {
         this.profilePictureInstagram = profilePictureInstagram;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
     }
 }

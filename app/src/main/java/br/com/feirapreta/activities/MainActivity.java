@@ -85,9 +85,19 @@ public class MainActivity extends AppCompatActivity{
                 @Override
                 public void onResponse(Call<ArrayList<Post>> call, Response<ArrayList<Post>> response) {
 
-                    highlights = response.body();
-                    highlightsAdapter = new HighlightsAdapter(highlights);
-                    recyclerView.setAdapter(highlightsAdapter);
+                    if(response.code() == 200){
+                        highlights = response.body();
+                        if(highlights != null){
+                            highlightsAdapter = new HighlightsAdapter(highlights);
+                            recyclerView.setAdapter(highlightsAdapter);
+                            if(highlights.isEmpty()){
+                                Toast.makeText(MainActivity.this, "Não há destaques cadastrados", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    }else{
+                        Toast.makeText(MainActivity.this, "Houve um erro em nossos servidores, estamos tentando resolver esse problema", Toast.LENGTH_SHORT).show();
+                    }
+
                 }
 
                 @Override
