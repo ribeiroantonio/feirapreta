@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -102,7 +103,13 @@ public class MainActivity extends AppCompatActivity{
 
                 @Override
                 public void onFailure(Call<ArrayList<Post>> call, Throwable t) {
-                    Toast.makeText(MainActivity.this, R.string.server_error_message, Toast.LENGTH_SHORT).show();
+                    Log.e("TAG", "" + t.getCause());
+                    if(t.getMessage() != null && t.getMessage().contains("Expected BEGIN_ARRAY")){
+                        Toast.makeText(MainActivity.this, "Desculpe, não há destaques cadastrados", Toast.LENGTH_SHORT).show();
+                    }else{
+                        Toast.makeText(MainActivity.this, R.string.server_error_message, Toast.LENGTH_SHORT).show();
+                    }
+
                 }
             });
 

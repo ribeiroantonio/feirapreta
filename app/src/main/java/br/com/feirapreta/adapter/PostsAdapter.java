@@ -1,6 +1,7 @@
 package br.com.feirapreta.adapter;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -61,9 +62,26 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.PostsViewHol
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Toast.makeText(view.getContext(), "REDIRECIONAR AO INSTAGRAM", Toast.LENGTH_SHORT).show();
+                    view.getContext().startActivity(newInstagramPostIntent(view.getContext().getPackageManager(), posts.get(getAdapterPosition()).getLink()));
                 }
             });
         }
+    }
+
+    public static Intent newInstagramPostIntent(PackageManager pm, String url){
+
+        try{
+            if(pm.getPackageInfo("com.instagram.android", 0) != null){
+                if(url.endsWith("/")){
+                    url = url.substring(0, url.length() - 1);
+                }
+                intent.setData(Uri.parse(url));
+                intent.setPackage("com.instagram.android");
+            }
+            return intent;
+        }catch(PackageManager.NameNotFoundException ignored){
+        }
+        intent.setData(Uri.parse(url));
+        return intent;
     }
 }
