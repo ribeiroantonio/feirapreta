@@ -35,6 +35,7 @@
                     android:tint="@color/grey"
                     android:layout_marginLeft="5dp"
                     android:layout_marginStart="5dp"
+                    android:onClick="goback"
                     />
 
                 <android.support.v7.widget.Toolbar

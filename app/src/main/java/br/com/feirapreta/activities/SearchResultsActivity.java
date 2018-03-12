@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.KeyEvent;
+import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -79,7 +80,8 @@ public class SearchResultsActivity extends AppCompatActivity {
             @Override
             public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
                 if (i == EditorInfo.IME_ACTION_SEARCH) {
-                    Toast.makeText(SearchResultsActivity.this, "TESTE", Toast.LENGTH_SHORT).show();
+                    searchedText = editTextSearch.getText().toString();
+                    loadPosts();
                     return true;
                 }
                 return false;
@@ -170,4 +172,8 @@ public class SearchResultsActivity extends AppCompatActivity {
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
+    public void goback(View view){
+        onBackPressed();
+        finish();
+    }
 }
