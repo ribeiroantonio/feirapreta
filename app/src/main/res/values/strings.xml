@@ -7,4 +7,13 @@
     <string name="server_error_message">Houve um erro ao tentar se conectar com os nossos servidores!</string>
     <string name="connection_error_message">Verifique sua conexão com a Internet</string>
 
+    <string name="menu_item_settings">Configurações</string>
+    <string name="menu_item_about">Sobre</string>
+
+    <string name="pref_network_title">Consumo de dados</string>
+    <string name="title_activity_settings">Settings</string>
+    <string name="pref_network_title_checkbox">Economizar dados nas buscas</string>
+    <string name="pref_summary_checkbox_network">Utilizar buscas por demanda para diminuir o consumo de dados. Buscas simples serão utilizadas caso essa opção seja desativada.</string>
+
+
 </resources>
