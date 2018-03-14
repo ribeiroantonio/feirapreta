@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="br.com.feirapreta.activities.SearchResultsActivity"
+    android:background="@color/backgroundWhite"
+    android:descendantFocusability="beforeDescendants"
+    android:focusableInTouchMode="true">
+
+    <android.support.design.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:background="@color/backgroundWhite">
+
+        <android.support.design.widget.AppBarLayout
+            android:layout_width="match_parent"
+            android:layout_height="65dp"
+            android:background="@color/backgroundWhite"
+            app:elevation="0dp"
+            >
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_scrollFlags="scroll|enterAlways|snap"
+                android:background="@color/backgroundWhite">
+
+                <ImageView
+                    android:layout_width="50dp"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/ic_chevron_left_black_48dp"
+                    android:tint="@color/grey"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginStart="5dp"
+                    android:onClick="goback"
+                    />
+
+                <android.support.v7.widget.Toolbar
+                    android:id="@+id/toolbarS"
+                    android:layout_width="match_parent"
+                    android:layout_height="65dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginRight="10dp"
+                    android:background="@color/backgroundWhite"
+                    app:layout_scrollFlags="scroll|enterAlways|snap">
+
+                    <EditText
+                        android:id="@+id/editText_searchScreen"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_margin="10dp"
+                        android:background="@drawable/shape"
+                        android:padding="5dp"
+
+                        android:drawableEnd="@mipmap/ic_more_vert_black_24dp"
+                        android:drawableRight="@mipmap/ic_more_vert_black_24dp"
+
+                        android:drawableTint="@color/grey"
+                        android:enabled="true"
+
+                        android:imeOptions="actionSearch"
+
+                        android:textColor="@color/grey"
+                        android:inputType="text"
+                        />
+
+                </android.support.v7.widget.Toolbar>
+
+            </LinearLayout>
+
+
+        </android.support.design.widget.AppBarLayout>
+
+        <android.support.v4.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/swipeRefreshSearchScreen"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            android:background="@color/backgroundWhite">
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/rvSearchResults"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:scrollbars="vertical"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior"
+                android:background="@color/backgroundWhite"
+                >
+
+            </android.support.v7.widget.RecyclerView>
+
+        </android.support.v4.widget.SwipeRefreshLayout>
+
+    </android.support.design.widget.CoordinatorLayout>
+
+</android.support.constraint.ConstraintLayout>
