@@ -1,7 +1,9 @@
 package br.com.feirapreta.activities;
 
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.preference.PreferenceManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -10,6 +12,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.widget.AbsListView;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -39,12 +42,15 @@ public class SearchResultsActivity extends AppCompatActivity {
     private SwipeRefreshLayout swipeRefreshLayout;
     private EditText editTextSearch;
     private String searchedText;
+    private boolean isDemand;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_results);
 
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        isDemand = preferences.getBoolean("search_demand", false);
         Fresco.initialize(this);
 
         initViews();
@@ -52,6 +58,7 @@ public class SearchResultsActivity extends AppCompatActivity {
     }
 
     private void initViews(){
+
         editTextSearch = findViewById(R.id.editText_searchScreen);
         Bundle bundle = getIntent().getExtras();
         if(bundle.get("searchedText") != null){

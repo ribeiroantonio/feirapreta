@@ -1,21 +1,24 @@
 package br.com.feirapreta.activities;
 
+import android.annotation.TargetApi;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Build;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.KeyEvent;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -33,7 +36,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class MainActivity extends AppCompatActivity{
+public class MainActivity extends AppCompatActivity implements PopupMenu.OnMenuItemClickListener{
 
     private RecyclerView recyclerView;
     private ArrayList<Post> highlights;
@@ -42,7 +45,7 @@ public class MainActivity extends AppCompatActivity{
     private SwipeRefreshLayout swipeRefreshLayout;
     private EditText editTextSearch;
     private String searchedText;
-    private Menu optionsMenu;
+
 
     //TOKEN AUTENTICAÇÂO
     private static final String TOKEN = "OTOKENFICAAQUI";
@@ -66,33 +69,29 @@ public class MainActivity extends AppCompatActivity{
         loadHighlights();
     }
 
-    @Override
-    public void onAttachedToWindow() {
-        openOptionsMenu();
-    }
-
     private void initViews(){
         editTextSearch = findViewById(R.id.editText_search);
         recyclerView = findViewById(R.id.recyclerview);
 
         editTextSearch.setText("");
-        /*editTextSearch.setOnTouchListener(new View.OnTouchListener() {
+        editTextSearch.setOnTouchListener(new View.OnTouchListener() {
             @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
+            public boolean onTouch(View v, MotionEvent event) {
                 final int DRAWABLE_LEFT = 0;
                 final int DRAWABLE_TOP = 1;
                 final int DRAWABLE_RIGHT = 2;
                 final int DRAWABLE_BOTTOM = 3;
 
-                if(motionEvent.getAction() == MotionEvent.ACTION_UP) {
-                    if(motionEvent.getRawX() >= (editTextSearch.getRight() - editTextSearch.getCompoundDrawables()[DRAWABLE_RIGHT].getBounds().width())) {
-                        Toast.makeText(MainActivity.this, "OPEN MENU", Toast.LENGTH_SHORT).show();
+                if(event.getAction() == MotionEvent.ACTION_UP) {
+                    if(event.getRawX() >= (editTextSearch.getRight() - editTextSearch.getCompoundDrawables()[DRAWABLE_RIGHT].getBounds().width())) {
+                        showMenu(v);
+
                         return true;
                     }
                 }
                 return false;
             }
-        });*/
+        });
 
         loadSearchBar();
         loadRVHighLights();
@@ -198,24 +197,29 @@ public class MainActivity extends AppCompatActivity{
         recyclerView.setAdapter(highlightsAdapter);
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.options_menu, optionsMenu);
-        return true;
+    @TargetApi(Build.VERSION_CODES.M)
+    public void showMenu(View view){
+
+        PopupMenu menu = new PopupMenu(this, view, Gravity.RIGHT);
+
+        menu.setOnMenuItemClickListener(this);
+        menu.inflate(R.menu.actions_menu);
+        menu.show();
     }
 
+
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onMenuItemClick(MenuItem item) {
         switch (item.getItemId()){
             case R.id.settings_menu_item:
-                Intent settings = new Intent(MainActivity.this, PreferenceActivity.class);
-                startActivity(settings);
+                Intent settingsIntent = new Intent(MainActivity.this, SettingsActivity.class);
+                startActivity(settingsIntent);
                 return true;
             case R.id.about_menu_item:
                 Toast.makeText(this, "SOBRE", Toast.LENGTH_SHORT).show();
                 return true;
             default:
-                return super.onOptionsItemSelected(item);
+                return false;
         }
     }
 }

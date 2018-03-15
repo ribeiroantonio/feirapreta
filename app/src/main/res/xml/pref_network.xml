@@ -3,14 +3,13 @@
 
     <PreferenceCategory
         android:title="@string/pref_network_title"
-        android:key="pref_key_network"
-        android:layout="?android:attr/preferenceCategoryStyle"
+        android:layout="@layout/preference_category"
         >
 
-        <CheckBoxPreference
-            android:key="checkbox_preference"
-            android:title="@string/pref_network_title_checkbox"
-            android:summary="@string/pref_summary_checkbox_network"/>
+        <CheckBoxPreference android:title="@string/pref_network_title_checkbox"
+            android:defaultValue="false"
+            android:summary="@string/pref_summary_checkbox_network"
+            android:key="search_demand" />
 
     </PreferenceCategory>
 
