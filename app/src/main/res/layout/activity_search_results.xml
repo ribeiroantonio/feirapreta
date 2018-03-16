@@ -55,10 +55,6 @@
                         android:background="@drawable/shape"
                         android:padding="5dp"
 
-                        android:drawableEnd="@mipmap/ic_more_vert_black_24dp"
-                        android:drawableRight="@mipmap/ic_more_vert_black_24dp"
-
-                        android:drawableTint="@color/grey"
                         android:enabled="true"
 
                         android:imeOptions="actionSearch"
@@ -96,5 +92,7 @@
         </android.support.v4.widget.SwipeRefreshLayout>
 
     </android.support.design.widget.CoordinatorLayout>
+
+
 
 </android.support.constraint.ConstraintLayout>
