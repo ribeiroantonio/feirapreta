@@ -95,7 +95,6 @@ public class MainActivity extends AppCompatActivity implements PopupMenu.OnMenuI
 
         loadSearchBar();
         loadRVHighLights();
-        loadHighlights();
 
         swipeRefreshLayout = findViewById(R.id.swipeRefreshHomeScreen);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
