@@ -35,7 +35,7 @@
                     android:tint="@color/grey"
                     android:layout_marginLeft="5dp"
                     android:layout_marginStart="5dp"
-                    android:onClick="goback"
+                    android:onClick="goBack"
                     />
 
                 <android.support.v7.widget.Toolbar
@@ -55,10 +55,6 @@
                         android:background="@drawable/shape"
                         android:padding="5dp"
 
-                        android:drawableEnd="@mipmap/ic_more_vert_black_24dp"
-                        android:drawableRight="@mipmap/ic_more_vert_black_24dp"
-
-                        android:drawableTint="@color/grey"
                         android:enabled="true"
 
                         android:imeOptions="actionSearch"
@@ -70,7 +66,6 @@
                 </android.support.v7.widget.Toolbar>
 
             </LinearLayout>
-
 
         </android.support.design.widget.AppBarLayout>
 
@@ -94,6 +89,14 @@
             </android.support.v7.widget.RecyclerView>
 
         </android.support.v4.widget.SwipeRefreshLayout>
+
+        <ProgressBar
+            android:id="@+id/main_progress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:indeterminateTint="@color/black"
+            android:indeterminateTintMode="src_in"/>
 
     </android.support.design.widget.CoordinatorLayout>
 

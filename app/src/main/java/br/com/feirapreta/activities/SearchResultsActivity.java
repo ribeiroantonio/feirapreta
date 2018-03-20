@@ -1,26 +1,33 @@
 package br.com.feirapreta.activities;
 
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Bundle;
+import android.os.Handler;
+import android.preference.PreferenceManager;
+import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.facebook.drawee.backends.pipeline.Fresco;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 import br.com.feirapreta.R;
+import br.com.feirapreta.Utils.PaginationScrollListener;
 import br.com.feirapreta.adapter.PostsAdapter;
 import br.com.feirapreta.model.Post;
 import br.com.feirapreta.model.RetrofitService;
@@ -32,56 +39,97 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class SearchResultsActivity extends AppCompatActivity {
 
-    private ArrayList<Post> posts;
-    private RecyclerView recyclerView;
-    private RecyclerView.Adapter postsAdapter;
-    private RecyclerView.LayoutManager layoutManager;
-    private SwipeRefreshLayout swipeRefreshLayout;
+    private ArrayList<Post> allPosts = new ArrayList<>();
+    private boolean isDemand;
     private EditText editTextSearch;
     private String searchedText;
+    private SwipeRefreshLayout swipeRefreshLayout;
+
+    PostsAdapter adapter;
+    GridLayoutManager gridLayoutManager;
+    RecyclerView recyclerView;
+    ProgressBar progressBar;
+    // Index from which pagination should start (0 is 1st page in our case)
+    private static final int PAGE_START = 1;
+    // Indicates if footer ProgressBar is shown (i.e. next page is loading)
+    private boolean isLoading = false;
+    // If current page is the last page (Pagination will stop after this page load)
+    private boolean isLastPage = false;
+    // total no. of pages to load. Initial load is page 0, after which 2 more pages will load.
+    private int TOTAL_PAGES = 3;
+    // indicates the current page which Pagination is fetching.
+    private int currentPage = PAGE_START;
+    // indicates the amount of items
+    private int TOTAL_COUNT = 0;
+    // indicates the amount of item to be displayed on each page
+    private int AMOUNT_BY_PAGE = 18;
+
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_results);
 
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        isDemand = preferences.getBoolean("search_demand", false);
         Fresco.initialize(this);
 
         initViews();
 
     }
 
-    private void initViews(){
+    protected void initViews() {
+        swipeRefreshLayout = findViewById(R.id.swipeRefreshSearchScreen);
+        progressBar = findViewById(R.id.main_progress);
+
         editTextSearch = findViewById(R.id.editText_searchScreen);
         Bundle bundle = getIntent().getExtras();
-        if(bundle.get("searchedText") != null){
+        if (bundle.get("searchedText") != null) {
             searchedText = bundle.getString("searchedText");
             editTextSearch.setText(searchedText);
         }
 
-        recyclerView = findViewById(R.id.rvSearchResults);
-        
         loadSearchBar();
-        loadRVPosts();
-        loadPosts();
+        loadRV();
 
-        swipeRefreshLayout = findViewById(R.id.swipeRefreshSearchScreen);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                loadPosts();
+                progressBar.setVisibility(View.VISIBLE);
+                currentPage = PAGE_START;
+                isLoading = false;
+                isLastPage = false;
+                if(!isDemand){
+                    adapter.clear();
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            loadRV();
+                        }
+                    }, 1000);
+                }else{
+                    loadRV();
+                }
+                swipeRefreshLayout.setRefreshing(false);
             }
         });
-
     }
-    
-    private void loadSearchBar(){
+
+    private void loadSearchBar() {
         editTextSearch.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
                 if (i == EditorInfo.IME_ACTION_SEARCH) {
+                    progressBar.setVisibility(View.VISIBLE);
                     searchedText = editTextSearch.getText().toString();
-                    loadPosts();
+                    if (getIntent().getStringExtra("searchedText") != null) {
+                        getIntent().removeExtra("searchedText");
+                        getIntent().putExtra("searchedText", searchedText);
+                    }
+                    currentPage = PAGE_START;
+                    isLoading = false;
+                    isLastPage = false;
+                    loadRV();
                     return true;
                 }
                 return false;
@@ -89,80 +137,211 @@ public class SearchResultsActivity extends AppCompatActivity {
         });
     }
 
-    private void loadRVPosts(){
-        recyclerView.setHasFixedSize(true);
+    private void loadRV() {
+        recyclerView = findViewById(R.id.rvSearchResults);
 
-        layoutManager = new GridLayoutManager(this, 3);
-        recyclerView.setLayoutManager(layoutManager);
+        adapter = new PostsAdapter(this);
 
-        posts = new ArrayList<>();
+        gridLayoutManager = new GridLayoutManager(this, 3);
+        gridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+            @Override
+            public int getSpanSize(int position) {
+                switch (adapter.getItemViewType(position)) {
+                    case 0:
+                        return 1;
+                    case 1:
+                        return 3;
+                    default:
+                        return -1;
+                }
+            }
+        });
+        recyclerView.setLayoutManager(gridLayoutManager);
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.setAdapter(adapter);
 
-        postsAdapter = new PostsAdapter(posts);
-        recyclerView.setAdapter(postsAdapter);
-    }
-
-    private void loadPosts(){
-        /*final Post post = new Post("https://scontent.cdninstagram.com/vp/46262dc93aae3c922a74d88776f62760/5B30C520/t51.2885-15/e35/p320x320/24838741_383209202121068_6888092107773313024_n.jpg", "https://www.instagram.com/p/BcXJ7-whIi-/");
-        Post post1 = new Post("https://scontent.cdninstagram.com/vp/e5c226b97d04c9421b3cc404f0570b7e/5B43A51A/t51.2885-15/e35/p320x320/24126586_192408241337439_1892377936535748608_n.jpg", "https://www.instagram.com/p/BcDlpH2BB5a/");
-        Post post2 = new Post("https://scontent.cdninstagram.com/vp/6f9803b2e13763cc0e9b996b461ec37e/5B27940C/t51.2885-15/e35/p320x320/23823410_1488491477900574_1307807199350751232_n.jpg", "https://www.instagram.com/p/BbsgpryB0fv/");
-        Random rand = new Random();
-        posts.add(post);
-        posts.add(post1);
-        posts.add(post2);
-
-        for (int i = 0; i < 18; i++){
-            posts.add(posts.get(rand.nextInt(3 - 0) + 0));
-        }*/
-
-        if(isNetworkAvailable()){
-            Gson gson = new GsonBuilder()
-                    .setLenient()
-                    .create();
-
-            Retrofit retrofit = new Retrofit.Builder()
-                    .baseUrl(RetrofitService.BASE_URL)
-                    .addConverterFactory(GsonConverterFactory.create(gson))
-                    .build();
-
-            RetrofitService request = retrofit.create(RetrofitService.class);
-            Call<ArrayList<Post>> call = request.searchByTag(searchedText);
-
-            call.enqueue(new Callback<ArrayList<Post>>(){
+        if (isDemand) {
+            recyclerView.addOnScrollListener(new PaginationScrollListener(gridLayoutManager) {
                 @Override
-                public void onResponse(Call<ArrayList<Post>> call, Response<ArrayList<Post>> response) {
-
-                    if (response.code() == 200){
-                        posts = response.body();
-                        if(posts != null){
-                            postsAdapter = new PostsAdapter(posts);
-                            recyclerView.setAdapter(postsAdapter);
-                            if(posts.isEmpty()){
-                                Toast.makeText(SearchResultsActivity.this, "Desculpe, não há resultados que correspondem a sua pesquisa", Toast.LENGTH_SHORT).show();
-                            }
+                protected void loadMoreItems() {
+                    isLoading = true;
+                    currentPage += 1;
+                    Log.e("SCROLL", "OnScroll nextPage()");
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            loadNextPage();
                         }
-                    }else{
-                        Toast.makeText(SearchResultsActivity.this, "" + response.code(), Toast.LENGTH_SHORT).show();
-                    }
-
+                    }, 1000);
                 }
 
                 @Override
-                public void onFailure(Call<ArrayList<Post>> call, Throwable t) {
-                    if(t.getMessage() != null && t.getMessage().contains("Expected BEGIN_ARRAY")){
-                        Toast.makeText(SearchResultsActivity.this, "Desculpe, não há resultados para sua pesquisa", Toast.LENGTH_SHORT).show();
-                    }else{
-                        Toast.makeText(SearchResultsActivity.this, R.string.server_error_message, Toast.LENGTH_SHORT).show();
-                    }
+                public int getTotalPageCount() {
+                    return TOTAL_PAGES;
+                }
+
+                @Override
+                public boolean isLastPage() {
+                    return isLastPage;
+                }
+
+                @Override
+                public boolean isLoading() {
+                    return isLoading;
                 }
             });
-        }else{
+
+            loadAllPosts();
+        } else {
+            loadAllPosts();
+        }
+    }
+
+    private void loadAllPosts() {
+
+        if(isNetworkAvailable()) {
+            if (editTextSearch.getText().toString().equals("mock")) {
+                Retrofit retrofit = new Retrofit.Builder()
+                        .baseUrl("https://private-adf1421-feirapretasimulator.apiary-mock.com/")
+                        .addConverterFactory(GsonConverterFactory.create())
+                        .build();
+
+                RetrofitService request = retrofit.create(RetrofitService.class);
+                Call<ArrayList<Post>> call = request.getMockedPosts();
+                call.enqueue(new Callback<ArrayList<Post>>() {
+                    @Override
+                    public void onResponse(Call<ArrayList<Post>> call, Response<ArrayList<Post>> response) {
+                        if (response.code() == 200) {
+                            allPosts = response.body();
+                            if (isDemand) {
+                                TOTAL_COUNT = allPosts.size();
+                                TOTAL_PAGES = (TOTAL_COUNT + AMOUNT_BY_PAGE - 1) / AMOUNT_BY_PAGE;
+                                loadFirstPage();
+                            } else {
+                                progressBar.setVisibility(View.GONE);
+                                adapter.addAll(allPosts);
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<ArrayList<Post>> call, Throwable t) {
+                        Log.e("TAG", "" + t.getCause());
+                        if (t.getMessage() != null && t.getMessage().contains("Expected BEGIN_ARRAY")) {
+                            Toast.makeText(SearchResultsActivity.this, "Desculpe, não há resultados para sua busca", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(SearchResultsActivity.this, R.string.server_error_message, Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+            } else {
+                Retrofit retrofit = new Retrofit.Builder()
+                        .baseUrl(RetrofitService.BASE_URL)
+                        .addConverterFactory(GsonConverterFactory.create())
+                        .build();
+
+                RetrofitService request = retrofit.create(RetrofitService.class);
+                Call<ArrayList<Post>> call = request.searchByTag(searchedText);
+                call.enqueue(new Callback<ArrayList<Post>>() {
+                    @Override
+                    public void onResponse(Call<ArrayList<Post>> call, Response<ArrayList<Post>> response) {
+                        if (response.code() == 200) {
+                            allPosts = response.body();
+                            if (isDemand) {
+                                TOTAL_COUNT = allPosts.size();
+                                TOTAL_PAGES = (TOTAL_COUNT + AMOUNT_BY_PAGE - 1) / AMOUNT_BY_PAGE;
+                                loadFirstPage();
+                            } else {
+                                progressBar.setVisibility(View.GONE);
+                                adapter.addAll(allPosts);
+                                if(allPosts.isEmpty()){
+                                    Toast.makeText(SearchResultsActivity.this, "Desculpe, não há resultados para sua busca", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<ArrayList<Post>> call, Throwable t) {
+                        Log.e("TAG", "" + t.getCause());
+                        if(t.getMessage() != null && t.getMessage().contains("Expected BEGIN_ARRAY")){
+                            Toast.makeText(SearchResultsActivity.this, "Desculpe, não há resultados para sua busca", Toast.LENGTH_SHORT).show();
+                        }else{
+                            Toast.makeText(SearchResultsActivity.this, R.string.server_error_message, Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+            }
+        }else {
             Toast.makeText(this, R.string.connection_error_message, Toast.LENGTH_SHORT).show();
         }
 
-        if (swipeRefreshLayout != null){
-            swipeRefreshLayout.setRefreshing(false);
+    }
+
+    private void loadFirstPage() {
+        ArrayList<Post> firstPage = new ArrayList<>();
+        if (!allPosts.isEmpty()) {
+            if (AMOUNT_BY_PAGE <= allPosts.size()) {
+                int to = currentPage * AMOUNT_BY_PAGE;
+                int from = to - AMOUNT_BY_PAGE;
+                for (int i = from; i < to; i++) {
+                    firstPage.add(allPosts.get(i));
+                }
+
+                progressBar.setVisibility(View.GONE);
+                adapter.addAll(firstPage);
+
+                if (currentPage <= TOTAL_PAGES && AMOUNT_BY_PAGE != allPosts.size()){
+                    adapter.addLoadingFooter();
+                } else{
+                    isLastPage = true;
+                }
+            } else {
+                int to = allPosts.size();
+                int from = 0;
+                for (int i = from; i < to; i++) {
+                    firstPage.add(allPosts.get(i));
+                }
+                isLastPage = true;
+                progressBar.setVisibility(View.GONE);
+                adapter.addAll(firstPage);
+            }
+
+        } else {
+            progressBar.setVisibility(View.GONE);
+            Toast.makeText(this, "Desculpe, não há resultados que correspondem a sua pesquisa", Toast.LENGTH_SHORT).show();
         }
 
+    }
+
+    private void loadNextPage() {
+
+        if (!isLastPage) {
+
+            int from = adapter.getItemCount();
+            int to;
+            if (allPosts.size() - from >= AMOUNT_BY_PAGE) {
+                to = currentPage * AMOUNT_BY_PAGE;
+            } else {
+                to = allPosts.size();
+            }
+            ArrayList<Post> nextPage = new ArrayList<>();
+            for (int i = from; i < to; i++) {
+                nextPage.add(allPosts.get(i));
+            }
+
+            adapter.removeLoadingFooter();
+            isLoading = false;
+
+            adapter.addAll(nextPage);
+
+            if (currentPage != TOTAL_PAGES){
+                adapter.addLoadingFooter();
+            } else {
+                isLastPage = true;
+            }
+
+        }
     }
 
     private boolean isNetworkAvailable() {
@@ -172,8 +351,9 @@ public class SearchResultsActivity extends AppCompatActivity {
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
-    public void goback(View view){
+    public void goBack(View view) {
         onBackPressed();
         finish();
     }
+
 }

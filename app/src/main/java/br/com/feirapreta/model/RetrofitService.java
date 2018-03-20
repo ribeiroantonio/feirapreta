@@ -26,4 +26,7 @@ public interface RetrofitService {
 
     @GET("publication/search/{searchedText}")
     Call<ArrayList<Post>> searchByTag(@Path(value = "searchedText") String searchedText);
+
+    @GET("posts")
+    Call<ArrayList<Post>> getMockedPosts();
 }
