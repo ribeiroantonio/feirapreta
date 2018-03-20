@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/back_red">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        tools:layout_editor_absoluteX="0dp">
+
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/textView"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="28dp"
+            android:fontFamily="@string/bottom_sheet_behavior"
+            android:textColor="@color/white"
+            app:srcCompat="@drawable/logo_branco" />
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:text="Versão 0.1 Beta"
+            android:textColor="@color/white"
+            android:fontFamily="@string/bottom_sheet_behavior"
+            android:textSize="12dp"
+            android:textStyle="bold"
+            />
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/textView"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="19dp"
+            android:layout_centerVertical="true"
+            android:textColor="@color/white"
+            android:fontFamily="@string/bottom_sheet_behavior"
+            android:text="© 2002 -2018 Intituto Feira Preta"
+            android:textSize="10dp"/>
+
+        <TextView
+            android:id="@+id/textView3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/textView2"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="5dp"
+            android:textColor="@color/white"
+            android:layout_centerVertical="true"
+            android:fontFamily="@string/bottom_sheet_behavior"
+            android:text="Todos os direitos reservados"
+            android:textSize="10dp"/>
+
+    </RelativeLayout>
+</android.support.constraint.ConstraintLayout>

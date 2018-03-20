@@ -4,6 +4,7 @@
         <color android:color="@color/background_material_light"/>
     </item>
     <item>
+
         <bitmap
             android:src="@drawable/launch_logo"
             android:tileMode="disabled"
