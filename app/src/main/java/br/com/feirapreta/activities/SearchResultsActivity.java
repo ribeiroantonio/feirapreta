@@ -24,10 +24,9 @@ import android.widget.Toast;
 import com.facebook.drawee.backends.pipeline.Fresco;
 
 import java.util.ArrayList;
-import java.util.Random;
 
 import br.com.feirapreta.R;
-import br.com.feirapreta.Utils.PaginationScrollListener;
+import br.com.feirapreta.utils.PaginationScrollListener;
 import br.com.feirapreta.adapter.PostsAdapter;
 import br.com.feirapreta.model.Post;
 import br.com.feirapreta.model.RetrofitService;
@@ -200,41 +199,6 @@ public class SearchResultsActivity extends AppCompatActivity {
     private void loadAllPosts() {
 
         if(isNetworkAvailable()) {
-            if (editTextSearch.getText().toString().equals("mock")) {
-                Retrofit retrofit = new Retrofit.Builder()
-                        .baseUrl("https://private-adf1421-feirapretasimulator.apiary-mock.com/")
-                        .addConverterFactory(GsonConverterFactory.create())
-                        .build();
-
-                RetrofitService request = retrofit.create(RetrofitService.class);
-                Call<ArrayList<Post>> call = request.getMockedPosts();
-                call.enqueue(new Callback<ArrayList<Post>>() {
-                    @Override
-                    public void onResponse(Call<ArrayList<Post>> call, Response<ArrayList<Post>> response) {
-                        if (response.code() == 200) {
-                            allPosts = response.body();
-                            if (isDemand) {
-                                TOTAL_COUNT = allPosts.size();
-                                TOTAL_PAGES = (TOTAL_COUNT + AMOUNT_BY_PAGE - 1) / AMOUNT_BY_PAGE;
-                                loadFirstPage();
-                            } else {
-                                progressBar.setVisibility(View.GONE);
-                                adapter.addAll(allPosts);
-                            }
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(Call<ArrayList<Post>> call, Throwable t) {
-                        Log.e("TAG", "" + t.getCause());
-                        if (t.getMessage() != null && t.getMessage().contains("Expected BEGIN_ARRAY")) {
-                            Toast.makeText(SearchResultsActivity.this, "Desculpe, não há resultados para sua busca", Toast.LENGTH_SHORT).show();
-                        } else {
-                            Toast.makeText(SearchResultsActivity.this, R.string.server_error_message, Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
-            } else {
                 Retrofit retrofit = new Retrofit.Builder()
                         .baseUrl(RetrofitService.BASE_URL)
                         .addConverterFactory(GsonConverterFactory.create())
@@ -271,7 +235,6 @@ public class SearchResultsActivity extends AppCompatActivity {
                         }
                     }
                 });
-            }
         }else {
             Toast.makeText(this, R.string.connection_error_message, Toast.LENGTH_SHORT).show();
         }
