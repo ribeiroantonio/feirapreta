@@ -46,7 +46,6 @@ public class MainActivity extends AppCompatActivity implements PopupMenu.OnMenuI
     private EditText editTextSearch;
     private String searchedText;
 
-
     //TOKEN AUTENTICAÇÂO
     private static final String TOKEN = "OTOKENFICAAQUI";
 

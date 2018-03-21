@@ -1,4 +1,4 @@
-package br.com.feirapreta.Utils;
+package br.com.feirapreta.utils;
 
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
