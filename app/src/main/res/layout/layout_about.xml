@@ -30,7 +30,7 @@
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
-            android:text="Versão 0.1 Beta"
+            android:text="Versão 0.3 Beta"
             android:textColor="@color/white"
             android:fontFamily="@string/bottom_sheet_behavior"
             android:textSize="12dp"
@@ -47,7 +47,7 @@
             android:layout_centerVertical="true"
             android:textColor="@color/white"
             android:fontFamily="@string/bottom_sheet_behavior"
-            android:text="© 2002 -2018 Intituto Feira Preta"
+            android:text="© 2002 -2018 Instituto Feira Preta"
             android:textSize="10dp"/>
 
         <TextView
@@ -60,7 +60,7 @@
             android:textColor="@color/white"
             android:layout_centerVertical="true"
             android:fontFamily="@string/bottom_sheet_behavior"
-            android:text="Todos os direitos reservados"
+            android:text="@string/copyrights"
             android:textSize="10dp"/>
 
     </RelativeLayout>

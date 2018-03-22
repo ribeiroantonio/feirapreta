@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/back_red"
+    android:orientation="vertical"
+    android:gravity="center">
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@string/bottom_sheet_behavior"
+        android:textColor="@color/white"
+        app:srcCompat="@drawable/logo_branco" />
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Versão 0.1 Beta"
+            android:textColor="@color/white"
+            android:fontFamily="@string/bottom_sheet_behavior"
+            android:textSize="12dp"
+            android:textStyle="bold"
+            />
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="19dp"
+            android:textColor="@color/white"
+            android:fontFamily="@string/bottom_sheet_behavior"
+            android:text="© 2002 -2018 Instituto Feira Preta"
+            android:textSize="10dp"/>
+
+        <TextView
+            android:id="@+id/textView3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="50dp"
+            android:textColor="@color/white"
+            android:fontFamily="@string/bottom_sheet_behavior"
+            android:text="@string/copyrights"
+            android:textSize="10dp"/>
+
+</LinearLayout>

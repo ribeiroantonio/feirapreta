@@ -16,4 +16,6 @@
     <string name="pref_summary_checkbox_network">Utilizar buscas por demanda para diminuir o consumo de dados. Buscas simples serão utilizadas caso essa opção seja desativada.</string>
 
 
+    <string name="copyrights">Todos os direitos reservados.</string>
+
 </resources>

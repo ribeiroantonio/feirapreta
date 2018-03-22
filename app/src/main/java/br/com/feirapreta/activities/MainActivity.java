@@ -2,6 +2,7 @@ package br.com.feirapreta.activities;
 
 import android.annotation.TargetApi;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
@@ -19,6 +20,7 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.PopupMenu;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -45,6 +47,10 @@ public class MainActivity extends AppCompatActivity implements PopupMenu.OnMenuI
     private SwipeRefreshLayout swipeRefreshLayout;
     private EditText editTextSearch;
     private String searchedText;
+    private ProgressBar progressBar;
+    private TextView emptyState;
+    private TextView noConnection;
+    private TextView connectionError;
 
     //TOKEN AUTENTICAÇÂO
     private static final String TOKEN = "OTOKENFICAAQUI";
@@ -69,6 +75,14 @@ public class MainActivity extends AppCompatActivity implements PopupMenu.OnMenuI
     }
 
     private void initViews(){
+        progressBar = findViewById(R.id.progressbar_main);
+
+        emptyState = findViewById(R.id.no_highlights);
+        connectionError = findViewById(R.id.server_error_main);
+        noConnection = findViewById(R.id.no_connection_main);
+
+        hideEmptyStates();
+
         editTextSearch = findViewById(R.id.editText_search);
         recyclerView = findViewById(R.id.recyclerview);
 
@@ -96,16 +110,26 @@ public class MainActivity extends AppCompatActivity implements PopupMenu.OnMenuI
         loadRVHighLights();
 
         swipeRefreshLayout = findViewById(R.id.swipeRefreshHomeScreen);
+        swipeRefreshLayout.setColorSchemeColors(Color.RED);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
+                progressBar.setVisibility(View.VISIBLE);
+                hideEmptyStates();
+                loadRVHighLights();
                 loadHighlights();
             }
         });
     }
 
+    private void hideEmptyStates(){
+        emptyState.setVisibility(View.GONE);
+        connectionError.setVisibility(View.GONE);
+        noConnection.setVisibility(View.GONE);
+    }
+
     private void loadHighlights(){
-        
+        hideEmptyStates();
         if(isNetworkAvailable()){
             Retrofit retrofit = new Retrofit.Builder()
                     .baseUrl(RetrofitService.BASE_URL)
@@ -117,36 +141,38 @@ public class MainActivity extends AppCompatActivity implements PopupMenu.OnMenuI
             call.enqueue(new Callback<ArrayList<Post>>() {
                 @Override
                 public void onResponse(Call<ArrayList<Post>> call, Response<ArrayList<Post>> response) {
-
+                    progressBar.setVisibility(View.GONE);
                     if(response.code() == 200){
                         highlights = response.body();
                         if(highlights != null){
                             highlightsAdapter = new HighlightsAdapter(highlights);
                             recyclerView.setAdapter(highlightsAdapter);
                             if(highlights.isEmpty()){
-                                Toast.makeText(MainActivity.this, "Não há destaques cadastrados", Toast.LENGTH_SHORT).show();
+                                emptyState.setVisibility(View.VISIBLE);
                             }
                         }
                     }else{
-                        Toast.makeText(MainActivity.this, "Houve um erro em nossos servidores, estamos tentando resolver esse problema", Toast.LENGTH_SHORT).show();
+                        connectionError.setVisibility(View.VISIBLE);
                     }
 
                 }
 
                 @Override
                 public void onFailure(Call<ArrayList<Post>> call, Throwable t) {
+                    progressBar.setVisibility(View.GONE);
                     Log.e("TAG", "" + t.getCause());
                     if(t.getMessage() != null && t.getMessage().contains("Expected BEGIN_ARRAY")){
-                        Toast.makeText(MainActivity.this, "Desculpe, não há destaques cadastrados", Toast.LENGTH_SHORT).show();
+                        emptyState.setVisibility(View.VISIBLE);
                     }else{
-                        Toast.makeText(MainActivity.this, R.string.server_error_message, Toast.LENGTH_SHORT).show();
+                        connectionError.setVisibility(View.VISIBLE);
                     }
 
                 }
             });
 
         }else{
-            Toast.makeText(this, R.string.connection_error_message, Toast.LENGTH_SHORT).show();
+            progressBar.setVisibility(View.GONE);
+            noConnection.setVisibility(View.VISIBLE);
         }
 
         if(swipeRefreshLayout != null){
@@ -214,7 +240,8 @@ public class MainActivity extends AppCompatActivity implements PopupMenu.OnMenuI
                 startActivity(settingsIntent);
                 return true;
             case R.id.about_menu_item:
-                Toast.makeText(this, "SOBRE", Toast.LENGTH_SHORT).show();
+                Intent aboutIntent = new Intent(MainActivity.this, AboutActivity.class);
+                startActivity(aboutIntent);
                 return true;
             default:
                 return false;

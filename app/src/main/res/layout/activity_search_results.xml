@@ -91,12 +91,33 @@
         </android.support.v4.widget.SwipeRefreshLayout>
 
         <ProgressBar
-            android:id="@+id/main_progress"
+            android:id="@+id/search_progress"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"/>
+
+        <TextView
+            android:id="@+id/no_search_results"
             android:layout_gravity="center"
-            android:indeterminateTint="@color/black"
-            android:indeterminateTintMode="src_in"/>
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Não há resultados para sua busca" />
+
+        <TextView
+            android:id="@+id/no_connection_search"
+            android:layout_gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Verifique sua conexão com a internet" />
+
+        <TextView
+            android:id="@+id/server_error_search"
+            android:layout_gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Houve um erro ao conectar-se aos nossos servidores" />
+
+
 
     </android.support.design.widget.CoordinatorLayout>
 

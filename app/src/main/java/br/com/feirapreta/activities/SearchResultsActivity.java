@@ -1,6 +1,7 @@
 package br.com.feirapreta.activities;
 
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -23,10 +24,12 @@ import android.widget.Toast;
 
 import com.facebook.drawee.backends.pipeline.Fresco;
 
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
 
 import br.com.feirapreta.R;
-import br.com.feirapreta.utils.PaginationScrollListener;
+import br.com.feirapreta.Utils.PaginationScrollListener;
 import br.com.feirapreta.adapter.PostsAdapter;
 import br.com.feirapreta.model.Post;
 import br.com.feirapreta.model.RetrofitService;
@@ -43,6 +46,9 @@ public class SearchResultsActivity extends AppCompatActivity {
     private EditText editTextSearch;
     private String searchedText;
     private SwipeRefreshLayout swipeRefreshLayout;
+    private TextView emptyResults;
+    private TextView noConnection;
+    private TextView connectionError;
 
     PostsAdapter adapter;
     GridLayoutManager gridLayoutManager;
@@ -78,8 +84,15 @@ public class SearchResultsActivity extends AppCompatActivity {
     }
 
     protected void initViews() {
+        emptyResults = findViewById(R.id.no_search_results);
+        noConnection = findViewById(R.id.no_connection_search);
+        connectionError = findViewById(R.id.server_error_search);
+
+        hideEmptyStates();
+
         swipeRefreshLayout = findViewById(R.id.swipeRefreshSearchScreen);
-        progressBar = findViewById(R.id.main_progress);
+        progressBar = findViewById(R.id.search_progress);
+
 
         editTextSearch = findViewById(R.id.editText_searchScreen);
         Bundle bundle = getIntent().getExtras();
@@ -91,9 +104,11 @@ public class SearchResultsActivity extends AppCompatActivity {
         loadSearchBar();
         loadRV();
 
+        swipeRefreshLayout.setColorSchemeColors(Color.RED);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
+                hideEmptyStates();
                 progressBar.setVisibility(View.VISIBLE);
                 currentPage = PAGE_START;
                 isLoading = false;
@@ -112,6 +127,12 @@ public class SearchResultsActivity extends AppCompatActivity {
                 swipeRefreshLayout.setRefreshing(false);
             }
         });
+    }
+
+    private void hideEmptyStates(){
+        emptyResults.setVisibility(View.GONE);
+        noConnection.setVisibility(View.GONE);
+        connectionError.setVisibility(View.GONE);
     }
 
     private void loadSearchBar() {
@@ -197,7 +218,7 @@ public class SearchResultsActivity extends AppCompatActivity {
     }
 
     private void loadAllPosts() {
-
+        hideEmptyStates();
         if(isNetworkAvailable()) {
                 Retrofit retrofit = new Retrofit.Builder()
                         .baseUrl(RetrofitService.BASE_URL)
@@ -219,7 +240,7 @@ public class SearchResultsActivity extends AppCompatActivity {
                                 progressBar.setVisibility(View.GONE);
                                 adapter.addAll(allPosts);
                                 if(allPosts.isEmpty()){
-                                    Toast.makeText(SearchResultsActivity.this, "Desculpe, não há resultados para sua busca", Toast.LENGTH_SHORT).show();
+                                    emptyResults.setVisibility(View.VISIBLE);
                                 }
                             }
                         }
@@ -229,13 +250,15 @@ public class SearchResultsActivity extends AppCompatActivity {
                     public void onFailure(Call<ArrayList<Post>> call, Throwable t) {
                         Log.e("TAG", "" + t.getCause());
                         if(t.getMessage() != null && t.getMessage().contains("Expected BEGIN_ARRAY")){
-                            Toast.makeText(SearchResultsActivity.this, "Desculpe, não há resultados para sua busca", Toast.LENGTH_SHORT).show();
+                            emptyResults.setVisibility(View.VISIBLE);
                         }else{
                             Toast.makeText(SearchResultsActivity.this, R.string.server_error_message, Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
         }else {
+            progressBar.setVisibility(View.GONE);
+            noConnection.setVisibility(View.VISIBLE);
             Toast.makeText(this, R.string.connection_error_message, Toast.LENGTH_SHORT).show();
         }
 
@@ -272,6 +295,7 @@ public class SearchResultsActivity extends AppCompatActivity {
 
         } else {
             progressBar.setVisibility(View.GONE);
+            emptyResults.setVisibility(View.VISIBLE);
             Toast.makeText(this, "Desculpe, não há resultados que correspondem a sua pesquisa", Toast.LENGTH_SHORT).show();
         }
 
