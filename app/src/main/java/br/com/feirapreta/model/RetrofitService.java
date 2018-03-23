@@ -26,4 +26,7 @@ public interface RetrofitService {
 
     @GET("publication/search/{searchedText}")
     Call<ArrayList<Post>> searchByTag(@Path(value = "searchedText") String searchedText);
+
+    @GET("publication/{postId}")
+    Call<Post> readPost(@Path(value = "postId") String postId);
 }

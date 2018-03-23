@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import br.com.feirapreta.R;
+import br.com.feirapreta.activities.DetailsActivity;
 import br.com.feirapreta.model.Post;
 
 /**
@@ -64,7 +65,10 @@ public class HighlightsAdapter extends RecyclerView.Adapter<HighlightsAdapter.Vi
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    view.getContext().startActivity(newInstagramPostIntent(view.getContext().getPackageManager(), highlights.get(getAdapterPosition()).getLink()));
+                    Intent details = new Intent(view.getContext(), DetailsActivity.class);
+                    details.putExtra("post_id", highlights.get(getAdapterPosition()).getId());
+                    details.putExtra("post_title", "Destaque");
+                    view.getContext().startActivity(details);
                 }
             });
         }
