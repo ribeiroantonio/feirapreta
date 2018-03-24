@@ -1,10 +1,12 @@
 package br.com.feirapreta.model;
 
+import java.io.Serializable;
+
 /**
  * Created by Antonio Ribeiro on 28/02/2018.
  */
 
-public class Person {
+public class Person implements Serializable{
 
     private String id;
     private String usernameInstagram;

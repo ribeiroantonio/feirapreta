@@ -1,10 +1,12 @@
 package br.com.feirapreta.model;
 
+import java.io.Serializable;
+
 /**
  * Created by Antonio Ribeiro on 28/02/2018.
  */
 
-public class Post {
+public class Post implements Serializable{
 
     private String id;
     private String link;

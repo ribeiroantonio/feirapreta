@@ -68,6 +68,7 @@ public class HighlightsAdapter extends RecyclerView.Adapter<HighlightsAdapter.Vi
                     Intent details = new Intent(view.getContext(), DetailsActivity.class);
                     details.putExtra("post_id", highlights.get(getAdapterPosition()).getId());
                     details.putExtra("post_title", "Destaque");
+                    details.putExtra("post", highlights.get(getAdapterPosition()));
                     view.getContext().startActivity(details);
                 }
             });

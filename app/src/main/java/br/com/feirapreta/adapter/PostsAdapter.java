@@ -16,6 +16,7 @@ import com.facebook.drawee.view.SimpleDraweeView;
 import java.util.ArrayList;
 
 import br.com.feirapreta.R;
+import br.com.feirapreta.activities.DetailsActivity;
 import br.com.feirapreta.model.Post;
 
 /**
@@ -169,8 +170,10 @@ public class PostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    itemView.getContext().startActivity(newInstagramPostIntent(itemView.getContext()
-                            .getPackageManager(), posts.get(getAdapterPosition()).getLink()));
+                    Intent details = new Intent(v.getContext(), DetailsActivity.class);
+                    details.putExtra("post_id", posts.get(getAdapterPosition()).getId());
+                    details.putExtra("post", posts.get(getAdapterPosition()));
+                    v.getContext().startActivity(details);
                 }
             });
         }
