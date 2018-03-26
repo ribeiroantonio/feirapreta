@@ -19,6 +19,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -50,6 +51,7 @@ public class MainActivity extends AppCompatActivity implements PopupMenu.OnMenuI
     private ProgressBar progressBar;
     private TextView emptyState;
     private TextView noConnection;
+    private ImageView imageNoConnection;
     private TextView connectionError;
 
     //TOKEN AUTENTICAÇÂO
@@ -80,6 +82,7 @@ public class MainActivity extends AppCompatActivity implements PopupMenu.OnMenuI
         emptyState = findViewById(R.id.no_highlights);
         connectionError = findViewById(R.id.server_error_main);
         noConnection = findViewById(R.id.no_connection_main);
+        imageNoConnection = findViewById(R.id.image_no_connection_main);
 
         hideEmptyStates();
 
@@ -126,6 +129,7 @@ public class MainActivity extends AppCompatActivity implements PopupMenu.OnMenuI
         emptyState.setVisibility(View.GONE);
         connectionError.setVisibility(View.GONE);
         noConnection.setVisibility(View.GONE);
+        imageNoConnection.setVisibility(View.GONE);
     }
 
     private void loadHighlights(){
@@ -173,6 +177,7 @@ public class MainActivity extends AppCompatActivity implements PopupMenu.OnMenuI
         }else{
             progressBar.setVisibility(View.GONE);
             noConnection.setVisibility(View.VISIBLE);
+            imageNoConnection.setVisibility(View.VISIBLE);
         }
 
         if(swipeRefreshLayout != null){

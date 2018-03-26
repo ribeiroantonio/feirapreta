@@ -1,5 +1,6 @@
 package br.com.feirapreta.activities;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.net.ConnectivityManager;
@@ -17,7 +18,9 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -49,6 +52,7 @@ public class SearchResultsActivity extends AppCompatActivity {
     private TextView emptyResults;
     private TextView noConnection;
     private TextView connectionError;
+    private ImageView imageEmptyResults;
 
     PostsAdapter adapter;
     GridLayoutManager gridLayoutManager;
@@ -87,6 +91,7 @@ public class SearchResultsActivity extends AppCompatActivity {
         emptyResults = findViewById(R.id.no_search_results);
         noConnection = findViewById(R.id.no_connection_search);
         connectionError = findViewById(R.id.server_error_search);
+        imageEmptyResults = findViewById(R.id.image_no_result_search);
 
         hideEmptyStates();
 
@@ -133,6 +138,7 @@ public class SearchResultsActivity extends AppCompatActivity {
         emptyResults.setVisibility(View.GONE);
         noConnection.setVisibility(View.GONE);
         connectionError.setVisibility(View.GONE);
+        imageEmptyResults.setVisibility(View.GONE);
     }
 
     private void loadSearchBar() {
@@ -140,6 +146,9 @@ public class SearchResultsActivity extends AppCompatActivity {
             @Override
             public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
                 if (i == EditorInfo.IME_ACTION_SEARCH) {
+                    View view = getCurrentFocus();
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
                     progressBar.setVisibility(View.VISIBLE);
                     searchedText = editTextSearch.getText().toString();
                     if (getIntent().getStringExtra("searchedText") != null) {
@@ -241,6 +250,7 @@ public class SearchResultsActivity extends AppCompatActivity {
                                 adapter.addAll(allPosts);
                                 if(allPosts.isEmpty()){
                                     emptyResults.setVisibility(View.VISIBLE);
+                                    imageEmptyResults.setVisibility(View.VISIBLE);
                                 }
                             }
                         }
@@ -251,6 +261,7 @@ public class SearchResultsActivity extends AppCompatActivity {
                         Log.e("TAG", "" + t.getCause());
                         if(t.getMessage() != null && t.getMessage().contains("Expected BEGIN_ARRAY")){
                             emptyResults.setVisibility(View.VISIBLE);
+                            imageEmptyResults.setVisibility(View.VISIBLE);
                         }else{
                             Toast.makeText(SearchResultsActivity.this, R.string.server_error_message, Toast.LENGTH_SHORT).show();
                         }
@@ -296,6 +307,7 @@ public class SearchResultsActivity extends AppCompatActivity {
         } else {
             progressBar.setVisibility(View.GONE);
             emptyResults.setVisibility(View.VISIBLE);
+            imageEmptyResults.setVisibility(View.VISIBLE);
             Toast.makeText(this, "Desculpe, não há resultados que correspondem a sua pesquisa", Toast.LENGTH_SHORT).show();
         }
 

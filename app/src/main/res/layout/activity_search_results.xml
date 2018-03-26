@@ -96,12 +96,23 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"/>
 
+        <ImageView
+            android:id="@+id/image_no_result_search"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:layout_gravity="center"
+            android:src="@drawable/noresults"
+            android:layout_marginBottom="50dp"/>
+
         <TextView
             android:id="@+id/no_search_results"
             android:layout_gravity="center"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Não há resultados para sua busca" />
+            android:layout_marginTop="150dp"
+            android:maxLines="2"
+            android:textAlignment="center"
+            android:text="Não foi possível encontrar resultados \npara sua busca" />
 
         <TextView
             android:id="@+id/no_connection_search"
