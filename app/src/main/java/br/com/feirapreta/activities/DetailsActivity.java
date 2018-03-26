@@ -35,7 +35,7 @@ public class DetailsActivity extends AppCompatActivity{
     private TextView postCaption;
     private TextView postPersonName;
     private TextView postPersonUser;
-    private TextView postpersonPhone;
+    //private TextView postpersonPhone;
     private Post post;
     private Bundle bundle;
 
@@ -70,7 +70,7 @@ public class DetailsActivity extends AppCompatActivity{
         postCaption = findViewById(R.id.details_post_caption);
         postPersonName = findViewById(R.id.details_user_name);
         postPersonUser = findViewById(R.id.details_user_nickname);
-        postpersonPhone = findViewById(R.id.details_user_phone);
+        //postpersonPhone = findViewById(R.id.details_user_phone);
         backButton = findViewById(R.id.details_back_button);
         
     }
@@ -98,12 +98,12 @@ public class DetailsActivity extends AppCompatActivity{
             titlePost = ("Post - " + post.getPerson().getFullNameInstagram());
         }
 
-        postImage.setImageURI(Uri.parse(post.getImageStandardResolution()));
+        postImage.setImageURI(Uri.parse(post.getImageLowResolution()));
         postTitle.setText(titlePost);
         postCaption.setText(post.getSubtitle().replace("?", ""));
         postPersonName.setText(post.getPerson().getFullNameInstagram());
         postPersonUser.setText("@" + post.getPerson().getUsernameInstagram());
-        postpersonPhone.setText(post.getPerson().getPhoneNumber());
+        //postpersonPhone.setText(post.getPerson().getPhoneNumber());
 
         postPersonUser.setOnClickListener(new View.OnClickListener() {
             @Override
