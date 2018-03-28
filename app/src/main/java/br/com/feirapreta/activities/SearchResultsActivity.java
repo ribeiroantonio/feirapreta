@@ -53,6 +53,7 @@ public class SearchResultsActivity extends AppCompatActivity {
     private TextView noConnection;
     private TextView connectionError;
     private ImageView imageEmptyResults;
+    private ImageView imageNoConnection;
 
     PostsAdapter adapter;
     GridLayoutManager gridLayoutManager;
@@ -91,6 +92,7 @@ public class SearchResultsActivity extends AppCompatActivity {
         emptyResults = findViewById(R.id.no_search_results);
         noConnection = findViewById(R.id.no_connection_search);
         connectionError = findViewById(R.id.server_error_search);
+        imageNoConnection = findViewById(R.id.image_no_connection_search);
         imageEmptyResults = findViewById(R.id.image_no_result_search);
 
         hideEmptyStates();
@@ -138,6 +140,7 @@ public class SearchResultsActivity extends AppCompatActivity {
         emptyResults.setVisibility(View.GONE);
         noConnection.setVisibility(View.GONE);
         connectionError.setVisibility(View.GONE);
+        imageNoConnection.setVisibility(View.GONE);
         imageEmptyResults.setVisibility(View.GONE);
     }
 
@@ -270,6 +273,7 @@ public class SearchResultsActivity extends AppCompatActivity {
         }else {
             progressBar.setVisibility(View.GONE);
             noConnection.setVisibility(View.VISIBLE);
+            imageNoConnection.setVisibility(View.VISIBLE);
             Toast.makeText(this, R.string.connection_error_message, Toast.LENGTH_SHORT).show();
         }
 
