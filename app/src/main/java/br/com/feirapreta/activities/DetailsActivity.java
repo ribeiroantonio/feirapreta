@@ -5,34 +5,21 @@ import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.facebook.drawee.view.SimpleDraweeView;
 
 import br.com.feirapreta.R;
 import br.com.feirapreta.model.Post;
-import br.com.feirapreta.model.RetrofitService;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 public class DetailsActivity extends AppCompatActivity{
 
     private String postId;
-    private String titlePost;
-    private ImageView backButton;
     private SimpleDraweeView postImage;
-    private ImageView instagramImage;
-    private TextView postTitle;
     private TextView postCaption;
     private TextView postPersonName;
     private TextView postPersonUser;
@@ -47,80 +34,133 @@ public class DetailsActivity extends AppCompatActivity{
 
         bundle = getIntent().getExtras();
         getPostId();
+
+        // Initializing views.
         initViews();
+
         if(postId != null){
             loadPost();
         }
     }
 
+    /**
+     * This method is used to recover postId from Extras and to check if the
+     * post is a highlight or not.
+     */
     private void getPostId(){
         if (bundle.get("post_id") != null) {
             postId = bundle.getString("post_id");
         }
-        if (bundle.get("post_title") != null) {
-            titlePost = bundle.getString("post_title");
-        }else{
-            titlePost = "false";
-        }
     }
 
+    /**
+     * This method is used to initialize the views/components used in the layout of this activity.
+     */
     private void initViews(){
 
         postImage = findViewById(R.id.details_post_image);
-        postTitle = findViewById(R.id.details_post_title);
         postCaption = findViewById(R.id.details_post_caption);
         postPersonName = findViewById(R.id.details_user_name);
         postPersonUser = findViewById(R.id.details_user_nickname);
         postpersonPhone = findViewById(R.id.details_user_phone);
-        backButton = findViewById(R.id.details_back_button);
         
     }
 
+    /**
+     * This method is used to recover the post the user clicked on
+     */
     private void loadPost(){
-
+        // checking if the post exists in the bundle.
         if(bundle.get("post") != null){
+            // recovering the post from the bundle of the intent.
             post = (Post) bundle.getSerializable("post");
+            // loading the information of the post into the views.
             loadDetails();
         }
-
     }
 
+    /**
+     * This method is used to load the information of the post into the views od this activity.
+     */
     private void loadDetails(){
 
-        Log.e("TAG", "TESTE:" + post.getSubtitle().replace("?", ""));
+        // checking if the post is null
+        if(post != null){
 
-        if(post.getSubtitle().replace("?", "").equals("")){
-            postCaption.setHeight(0);
-        }else{
-            postCaption.setMaxLines(4);
-        }
-
-        if(titlePost.equals("false")){
-            titlePost = ("Post - " + post.getPerson().getFullNameInstagram());
-        }
-
-        postImage.setImageURI(Uri.parse(post.getImageLowResolution()));
-        postImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(newInstagramPostIntent(getPackageManager(), post.getLink()));
+            //------- Verifying if data isn't null and setting values into the views -------------.
+            if(post.getImageLowResolution() != null){
+                postImage.setImageURI(Uri.parse(post.getImageLowResolution()));
+                postImage.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        startActivity(newInstagramPostIntent(getPackageManager(), post.getLink()));
+                    }
+                });
             }
-        });
-        postTitle.setText(titlePost);
-        postCaption.setText(post.getSubtitle().replace("?", ""));
-        postPersonName.setText(post.getPerson().getFullNameInstagram());
-        postPersonUser.setText("@" + post.getPerson().getUsernameInstagram());
-        postpersonPhone.setText(post.getPerson().getPhoneNumber());
 
-        postPersonUser.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(newInstagramPostIntent(getPackageManager(), ("https://www.instagram.com/" + post.getPerson().getUsernameInstagram())));
+            if(post.getPerson().getFullNameInstagram() != null && !(post.getPerson()
+                    .getFullNameInstagram().isEmpty())){
+
+                postPersonName.setText(post.getPerson().getFullNameInstagram());
             }
-        });
 
+            if(post.getSubtitle() != null){
+                if(post.getSubtitle().replace("?", "").equals("")){
+                    postCaption.setHeight(0);
+                }else{
+                    postCaption.setMaxLines(6);
+                }
+                postCaption.setText(post.getSubtitle().replace("?", ""));
+                postCaption.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        startActivity(newInstagramPostIntent(getPackageManager(), post.getLink()));
+                    }
+                });
+            }
+
+            if(post.getPerson().getUsernameInstagram() != null){
+                String username = "@" + post.getPerson().getUsernameInstagram();
+                postPersonUser.setText(username);
+                postPersonUser.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        startActivity(newInstagramPostIntent(getPackageManager(),
+                                ("https://www.instagram.com/" + post.getPerson()
+                                                                        .getUsernameInstagram())));
+                    }
+                });
+            }
+
+            if(post.getPerson().getPhoneNumber() != null){
+                postpersonPhone.setText(post.getPerson().getPhoneNumber());
+                postpersonPhone.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        String phone = post.getPerson().getPhoneNumber();
+                        String name = "";
+                        if(post.getPerson().getFullNameInstagram() != null){
+                            name = post.getPerson().getFullNameInstagram();
+                        }
+
+                        Intent intent = new Intent(Intent.ACTION_INSERT);
+                        intent.setType(ContactsContract.Contacts.CONTENT_TYPE);
+
+                        intent.putExtra(ContactsContract.Intents.Insert.NAME, name);
+                        intent.putExtra(ContactsContract.Intents.Insert.PHONE, phone);
+
+                        startActivity(intent);
+                    }
+                });
+            }
+
+        }
     }
 
+    /**
+     * This method is used to check if the user is connected to a network.
+     * @return boolean value
+     */
     private boolean isNetworkAvailable() {
         ConnectivityManager connectivityManager
                 = (ConnectivityManager) getSystemService(this.CONNECTIVITY_SERVICE);
@@ -128,6 +168,12 @@ public class DetailsActivity extends AppCompatActivity{
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
+    /**
+     * This method is used to open an Instagram URL in the Instagram app.
+     * @param pm PackageManager of the activity.
+     * @param url Instagram URL to be opened.
+     * @return Instagram Intent to be started.
+     */
     public static Intent newInstagramPostIntent(PackageManager pm, String url){
 
         Intent intent = new Intent(Intent.ACTION_VIEW);
@@ -147,14 +193,15 @@ public class DetailsActivity extends AppCompatActivity{
         return intent;
     }
 
-    public void goBackDetails(View view){
-        onBackPressed();
-        this.finish();
-    }
-
+    /**
+     * This method is used to redirect the user to an activity to create a new contact when the add
+     * contact button is clicked.
+     * @param view Item to be clicked.
+     */
     public void addContact(View view){
         String phone = "";
         String name = "";
+
         if(post.getPerson().getPhoneNumber() != null){
             phone = post.getPerson().getPhoneNumber();
         }
@@ -172,28 +219,13 @@ public class DetailsActivity extends AppCompatActivity{
         startActivity(intent);
     }
 
-    /*if(isNetworkAvailable()){
-            Retrofit retrofit = new Retrofit.Builder()
-                    .baseUrl(RetrofitService.BASE_URL)
-                    .addConverterFactory(GsonConverterFactory.create())
-                    .build();
-            RetrofitService request = retrofit.create(RetrofitService.class);
-            Call<Post> call = request.readPost(postId);
-            call.enqueue(new Callback<Post>() {
-                @Override
-                public void onResponse(Call<Post> call, Response<Post> response) {
-                    Log.e("TAG", "foi");
-                    Log.e("TAG", "foi: " + response.body().getPerson().getUsernameInstagram());
-                    post = response.body();
-                    Log.e("TAG", "" + post.getId());
-                    loadDetails();
-                }
+    /**
+     * This method is used to go back to last activity when the user clicks on back arrow button
+     * @param view Item to be clicked
+     */
+    public void goBackDetails(View view){
+        onBackPressed();
+        this.finish();
+    }
 
-                @Override
-                public void onFailure(Call<Post> call, Throwable t) {
-                    Log.e("TAG", "" + t.getMessage());
-                    Log.e("TAG", "" + post.getId());
-                }
-            });
-        }*/
 }

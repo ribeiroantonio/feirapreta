@@ -19,13 +19,14 @@ import br.com.feirapreta.activities.DetailsActivity;
 import br.com.feirapreta.model.Post;
 
 /**
+ * This is the adapter for highlights to be loaded and displayed on a recycler in the main activity.
  * Created by Antonio Ribeiro on 28/02/2018.
  */
 
 public class HighlightsAdapter extends RecyclerView.Adapter<HighlightsAdapter.ViewHolder> {
 
+    //list of highlights.
     private static ArrayList<Post> highlights;
-    private static Intent intent = new Intent(Intent.ACTION_VIEW);
 
     public HighlightsAdapter(ArrayList<Post> highlights){
         this.highlights = highlights;
@@ -73,23 +74,6 @@ public class HighlightsAdapter extends RecyclerView.Adapter<HighlightsAdapter.Vi
                 }
             });
         }
-    }
-
-    public static Intent newInstagramPostIntent(PackageManager pm, String url){
-
-        try{
-            if(pm.getPackageInfo("com.instagram.android", 0) != null){
-                if(url.endsWith("/")){
-                    url = url.substring(0, url.length() - 1);
-                }
-                intent.setData(Uri.parse(url));
-                intent.setPackage("com.instagram.android");
-            }
-            return intent;
-        }catch(PackageManager.NameNotFoundException ignored){
-        }
-        intent.setData(Uri.parse(url));
-        return intent;
     }
 
 }

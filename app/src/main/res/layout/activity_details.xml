@@ -55,16 +55,6 @@
             </android.support.design.widget.CollapsingToolbarLayout>
 
             <TextView
-                android:id="@+id/details_post_title"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/white"
-                android:padding="10dp"
-                android:text="Titulo"
-                android:textSize="17sp"
-                android:textStyle="bold" />
-
-            <TextView
                 android:id="@+id/details_post_caption"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

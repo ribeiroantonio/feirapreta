@@ -6,12 +6,11 @@ import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
+import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.MenuItem;
@@ -23,7 +22,6 @@ import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.facebook.drawee.backends.pipeline.Fresco;
 
@@ -31,8 +29,8 @@ import java.util.ArrayList;
 
 import br.com.feirapreta.R;
 import br.com.feirapreta.adapter.HighlightsAdapter;
-import br.com.feirapreta.model.RetrofitService;
 import br.com.feirapreta.model.Post;
+import br.com.feirapreta.model.RetrofitService;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -54,19 +52,17 @@ public class MainActivity extends AppCompatActivity implements PopupMenu.OnMenuI
     private ImageView imageNoConnection;
     private TextView connectionError;
 
-    //TOKEN AUTENTICAÇÂO
-    private static final String TOKEN = "OTOKENFICAAQUI";
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // This is the initialization of Fresco, the library used to load images from the web.
         Fresco.initialize(this);
 
+        // Initializing views and components.
         initViews();
 
-        //SharedPreferences preferences = getSharedPreferences(getString(R.string.token), 0);
     }
 
     @Override
@@ -76,6 +72,9 @@ public class MainActivity extends AppCompatActivity implements PopupMenu.OnMenuI
         loadHighlights();
     }
 
+    /**
+     * This method is used to initialize the views/components used in the layout of this activity.
+     */
     private void initViews(){
         progressBar = findViewById(R.id.progressbar_main);
 
@@ -84,6 +83,7 @@ public class MainActivity extends AppCompatActivity implements PopupMenu.OnMenuI
         noConnection = findViewById(R.id.no_connection_main);
         imageNoConnection = findViewById(R.id.image_no_connection_main);
 
+        // hiding all the empty states.
         hideEmptyStates();
 
         editTextSearch = findViewById(R.id.editText_search);
@@ -99,7 +99,8 @@ public class MainActivity extends AppCompatActivity implements PopupMenu.OnMenuI
                 final int DRAWABLE_BOTTOM = 3;
 
                 if(event.getAction() == MotionEvent.ACTION_UP) {
-                    if(event.getRawX() >= (editTextSearch.getRight() - editTextSearch.getCompoundDrawables()[DRAWABLE_RIGHT].getBounds().width())) {
+                    if(event.getRawX() >= (editTextSearch.getRight() - editTextSearch
+                            .getCompoundDrawables()[DRAWABLE_RIGHT].getBounds().width())) {
                         showMenu(v);
 
                         return true;
@@ -109,7 +110,10 @@ public class MainActivity extends AppCompatActivity implements PopupMenu.OnMenuI
             }
         });
 
+        // Loading the search bar with the last searched tag.
         loadSearchBar();
+
+        // loading the RecyclerView.
         loadRVHighLights();
 
         swipeRefreshLayout = findViewById(R.id.swipeRefreshHomeScreen);
@@ -125,6 +129,9 @@ public class MainActivity extends AppCompatActivity implements PopupMenu.OnMenuI
         });
     }
 
+    /**
+     * This method is used to hide all of the empty states.
+     */
     private void hideEmptyStates(){
         emptyState.setVisibility(View.GONE);
         connectionError.setVisibility(View.GONE);
@@ -132,20 +139,31 @@ public class MainActivity extends AppCompatActivity implements PopupMenu.OnMenuI
         imageNoConnection.setVisibility(View.GONE);
     }
 
+    /**
+     * This method is used to load the highlights into the Recycler View.
+     */
     private void loadHighlights(){
+        // hiding all the empty states
         hideEmptyStates();
+
+        // checking if the user has network connection.
         if(isNetworkAvailable()){
+
+            // Building a new Retrofit
             Retrofit retrofit = new Retrofit.Builder()
                     .baseUrl(RetrofitService.BASE_URL)
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();
 
+            // Creating and realizing a request to the backend server.
             RetrofitService request = retrofit.create(RetrofitService.class);
             Call<ArrayList<Post>> call = request.listHighlight();
             call.enqueue(new Callback<ArrayList<Post>>() {
+                // If the request is successful
                 @Override
                 public void onResponse(Call<ArrayList<Post>> call, Response<ArrayList<Post>> response) {
                     progressBar.setVisibility(View.GONE);
+                    // If the response is OK.
                     if(response.code() == 200){
                         highlights = response.body();
                         if(highlights != null){
@@ -156,15 +174,16 @@ public class MainActivity extends AppCompatActivity implements PopupMenu.OnMenuI
                             }
                         }
                     }else{
+                        // If the response has unexpected content.
                         connectionError.setVisibility(View.VISIBLE);
                     }
 
                 }
 
+                // If there was an error connecting to the API.
                 @Override
                 public void onFailure(Call<ArrayList<Post>> call, Throwable t) {
                     progressBar.setVisibility(View.GONE);
-                    Log.e("TAG", "" + t.getCause());
                     if(t.getMessage() != null && t.getMessage().contains("Expected BEGIN_ARRAY")){
                         emptyState.setVisibility(View.VISIBLE);
                     }else{
@@ -175,6 +194,7 @@ public class MainActivity extends AppCompatActivity implements PopupMenu.OnMenuI
             });
 
         }else{
+            // If the user doesn't has network connection.
             progressBar.setVisibility(View.GONE);
             noConnection.setVisibility(View.VISIBLE);
             imageNoConnection.setVisibility(View.VISIBLE);
@@ -187,6 +207,10 @@ public class MainActivity extends AppCompatActivity implements PopupMenu.OnMenuI
         
     }
 
+    /**
+     * This method is used to check if the user is connected to a network.
+     * @return boolean value
+     */
     private boolean isNetworkAvailable() {
         ConnectivityManager connectivityManager
                 = (ConnectivityManager) getSystemService(this.CONNECTIVITY_SERVICE);
@@ -194,8 +218,11 @@ public class MainActivity extends AppCompatActivity implements PopupMenu.OnMenuI
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
+    /**
+     * This method is used to set an action to the Search Bar which will redirect the user to the
+     * activity with results for the search.
+     */
     private void loadSearchBar(){
-
         editTextSearch.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
@@ -211,6 +238,9 @@ public class MainActivity extends AppCompatActivity implements PopupMenu.OnMenuI
         });
     }
 
+    /**
+     * This method is used to load the Recycler View
+     */
     private void loadRVHighLights(){
 
         recyclerView.setHasFixedSize(true);
@@ -226,6 +256,10 @@ public class MainActivity extends AppCompatActivity implements PopupMenu.OnMenuI
         recyclerView.setAdapter(highlightsAdapter);
     }
 
+    /**
+     * This method is used to show the options menu on the search bar
+     * @param view
+     */
     @TargetApi(Build.VERSION_CODES.M)
     public void showMenu(View view){
 
@@ -235,7 +269,6 @@ public class MainActivity extends AppCompatActivity implements PopupMenu.OnMenuI
         menu.inflate(R.menu.actions_menu);
         menu.show();
     }
-
 
     @Override
     public boolean onMenuItemClick(MenuItem item) {

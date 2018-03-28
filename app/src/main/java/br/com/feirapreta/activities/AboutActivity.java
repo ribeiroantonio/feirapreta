@@ -5,6 +5,9 @@ import android.os.Bundle;
 
 import br.com.feirapreta.R;
 
+/**
+ * This is tbe activity with information about the application.
+ */
 public class AboutActivity extends AppCompatActivity {
 
     @Override

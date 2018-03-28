@@ -88,6 +88,12 @@ public class SearchResultsActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    public void onBackPressed() {
+        hideEmptyStates();
+        super.onBackPressed();
+    }
+
     protected void initViews() {
         emptyResults = findViewById(R.id.no_search_results);
         noConnection = findViewById(R.id.no_connection_search);
@@ -355,6 +361,7 @@ public class SearchResultsActivity extends AppCompatActivity {
     }
 
     public void goBack(View view) {
+        hideEmptyStates();
         onBackPressed();
         finish();
     }

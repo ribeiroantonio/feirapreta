@@ -8,14 +8,13 @@ import br.com.feirapreta.R;
 
 public class SettingsActivity extends Activity {
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
     }
 
+    // Preferences Fragment that will be loaded into the activity.
     public static class Preferences extends android.preference.PreferenceFragment {
 
         @Override
