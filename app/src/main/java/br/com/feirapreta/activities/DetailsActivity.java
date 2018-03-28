@@ -5,6 +5,7 @@ import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.provider.ContactsContract;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -98,7 +99,13 @@ public class DetailsActivity extends AppCompatActivity{
             titlePost = ("Post - " + post.getPerson().getFullNameInstagram());
         }
 
-        postImage.setImageURI(Uri.parse(post.getImageStandardResolution()));
+        postImage.setImageURI(Uri.parse(post.getImageLowResolution()));
+        postImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(newInstagramPostIntent(getPackageManager(), post.getLink()));
+            }
+        });
         postTitle.setText(titlePost);
         postCaption.setText(post.getSubtitle().replace("?", ""));
         postPersonName.setText(post.getPerson().getFullNameInstagram());
@@ -143,6 +150,26 @@ public class DetailsActivity extends AppCompatActivity{
     public void goBackDetails(View view){
         onBackPressed();
         this.finish();
+    }
+
+    public void addContact(View view){
+        String phone = "";
+        String name = "";
+        if(post.getPerson().getPhoneNumber() != null){
+            phone = post.getPerson().getPhoneNumber();
+        }
+
+        if(post.getPerson().getFullNameInstagram() != null){
+            name = post.getPerson().getFullNameInstagram();
+        }
+
+        Intent intent = new Intent(Intent.ACTION_INSERT);
+        intent.setType(ContactsContract.Contacts.CONTENT_TYPE);
+
+        intent.putExtra(ContactsContract.Intents.Insert.NAME, name);
+        intent.putExtra(ContactsContract.Intents.Insert.PHONE, phone);
+
+        startActivity(intent);
     }
 
     /*if(isNetworkAvailable()){
