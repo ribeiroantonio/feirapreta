@@ -17,6 +17,9 @@ import retrofit2.http.Path;
  * Created by HyanSiqueira on 01/03/2018.
  */
 
+
+
+
 public interface RetrofitService {
     //Escreve aqui o IP que estará o back
     String BASE_URL="http://feirapreta-001-site1.ctempurl.com/api/";
