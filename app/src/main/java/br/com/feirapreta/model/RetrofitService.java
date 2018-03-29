@@ -35,7 +35,7 @@ public interface RetrofitService {
 
     // -- Voting
 
-    @POST("eventscore/}")
+    @POST("eventscore")
     Call<Void> voting(@Body Float vot);
 
 

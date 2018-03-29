@@ -27,6 +27,8 @@ public class VotingActivity extends AppCompatActivity {
         setContentView(R.layout.activity_voting2);
     }
 
+
+
     public void onClick(View v) {
         ratingBar = findViewById(R.id.ratingBar);
         voto = ratingBar.getRating();
@@ -36,10 +38,18 @@ public class VotingActivity extends AppCompatActivity {
         dialog.show();
         RetrofitService retrofitService = RetrofitService.retrofit.create(RetrofitService.class);
 
+
+
+
         final Call<Void> call = retrofitService.voting(voto);
+
+
+
 
         call.enqueue(new Callback<Void>() {
             @Override
+
+
             public void onResponse(Call<Void> call, Response<Void> response) {
                 if (dialog.isShowing())
                     dialog.dismiss();
