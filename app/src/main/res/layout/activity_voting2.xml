@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -62,6 +61,7 @@
             android:layout_marginTop="23dp"
             android:background="#EC2E2B"
             android:text="Enviar"
+            android:onClick="onClick"
             android:textColor="@color/white"
             tools:layout_editor_absoluteX="148dp"
             tools:layout_editor_absoluteY="319dp"

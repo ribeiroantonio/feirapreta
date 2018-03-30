@@ -248,6 +248,9 @@ public class MainActivity extends AppCompatActivity implements PopupMenu.OnMenuI
                 Intent aboutIntent = new Intent(MainActivity.this, AboutActivity.class);
                 startActivity(aboutIntent);
                 return true;
+            case R.id.voting_menu_item:
+                Intent voteIntent = new Intent(MainActivity.this, VotingActivity.class);
+                startActivity(voteIntent);
             default:
                 return false;
         }
