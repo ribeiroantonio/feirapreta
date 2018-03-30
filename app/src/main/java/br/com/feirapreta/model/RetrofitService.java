@@ -39,7 +39,7 @@ public interface RetrofitService {
     // -- Voting
 
     @POST("eventscore")
-    Call<Void> voting(@Body Float vot);
+    Call<ResponseBody> voting(@Body Vote value);
 
 
     public static final retrofit2.Retrofit retrofit = new retrofit2.Retrofit.Builder()
