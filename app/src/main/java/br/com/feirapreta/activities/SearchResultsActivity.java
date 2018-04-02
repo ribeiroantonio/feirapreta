@@ -54,6 +54,7 @@ public class SearchResultsActivity extends AppCompatActivity {
     private TextView connectionError;
     private ImageView imageEmptyResults;
     private ImageView imageNoConnection;
+    private ImageView imageServerError;
 
     PostsAdapter adapter;
     GridLayoutManager gridLayoutManager;
@@ -100,6 +101,7 @@ public class SearchResultsActivity extends AppCompatActivity {
         connectionError = findViewById(R.id.server_error_search);
         imageNoConnection = findViewById(R.id.image_no_connection_search);
         imageEmptyResults = findViewById(R.id.image_no_result_search);
+        imageServerError = findViewById(R.id.image_server_error_search);
 
         hideEmptyStates();
 
@@ -148,6 +150,7 @@ public class SearchResultsActivity extends AppCompatActivity {
         connectionError.setVisibility(View.GONE);
         imageNoConnection.setVisibility(View.GONE);
         imageEmptyResults.setVisibility(View.GONE);
+        imageServerError.setVisibility(View.GONE);
     }
 
     private void loadSearchBar() {
@@ -272,6 +275,7 @@ public class SearchResultsActivity extends AppCompatActivity {
                             emptyResults.setVisibility(View.VISIBLE);
                             imageEmptyResults.setVisibility(View.VISIBLE);
                         }else{
+                            imageServerError.setVisibility(View.VISIBLE);
                             Toast.makeText(SearchResultsActivity.this, R.string.server_error_message, Toast.LENGTH_SHORT).show();
                         }
                     }

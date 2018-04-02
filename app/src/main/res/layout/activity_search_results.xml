@@ -131,6 +131,14 @@
             android:layout_marginTop="150dp"
             android:text="Verifique sua conexão com a internet" />
 
+        <ImageView
+            android:id="@+id/image_server_error_search"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:layout_gravity="center"
+            android:src="@drawable/servererror"
+            android:layout_marginBottom="50dp"/>
+
         <TextView
             android:id="@+id/server_error_search"
             android:layout_gravity="center"

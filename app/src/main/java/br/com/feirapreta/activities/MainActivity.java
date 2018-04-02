@@ -51,6 +51,7 @@ public class MainActivity extends AppCompatActivity implements PopupMenu.OnMenuI
     private TextView noConnection;
     private ImageView imageNoConnection;
     private TextView connectionError;
+    private ImageView imageServerError;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,6 +83,7 @@ public class MainActivity extends AppCompatActivity implements PopupMenu.OnMenuI
         connectionError = findViewById(R.id.server_error_main);
         noConnection = findViewById(R.id.no_connection_main);
         imageNoConnection = findViewById(R.id.image_no_connection_main);
+        imageServerError = findViewById(R.id.image_server_error_main);
 
         // hiding all the empty states.
         hideEmptyStates();
@@ -137,6 +139,7 @@ public class MainActivity extends AppCompatActivity implements PopupMenu.OnMenuI
         connectionError.setVisibility(View.GONE);
         noConnection.setVisibility(View.GONE);
         imageNoConnection.setVisibility(View.GONE);
+        imageServerError.setVisibility(View.GONE);
     }
 
     /**
@@ -176,6 +179,7 @@ public class MainActivity extends AppCompatActivity implements PopupMenu.OnMenuI
                     }else{
                         // If the response has unexpected content.
                         connectionError.setVisibility(View.VISIBLE);
+                        imageServerError.setVisibility(View.VISIBLE);
                     }
 
                 }
@@ -188,6 +192,7 @@ public class MainActivity extends AppCompatActivity implements PopupMenu.OnMenuI
                         emptyState.setVisibility(View.VISIBLE);
                     }else{
                         connectionError.setVisibility(View.VISIBLE);
+                        imageServerError.setVisibility(View.VISIBLE);
                     }
 
                 }
