@@ -5,6 +5,8 @@ import java.util.List;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
+import retrofit2.converter.gson.GsonConverterFactory;
+import retrofit2.http.Body;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
@@ -14,6 +16,9 @@ import retrofit2.http.Path;
 /**
  * Created by HyanSiqueira on 01/03/2018.
  */
+
+
+
 
 public interface RetrofitService {
     //Escreve aqui o IP que estará o back
@@ -29,4 +34,16 @@ public interface RetrofitService {
 
     @GET("publication/{postId}")
     Call<Post> readPost(@Path(value = "postId") String postId);
+
+
+    // -- Voting
+
+    @POST("eventscore")
+    Call<ResponseBody> voting(@Body Vote value);
+
+
+    public static final retrofit2.Retrofit retrofit = new retrofit2.Retrofit.Builder()
+            .baseUrl("http://feirapreta-001-site1.ctempurl.com/api/")
+            .addConverterFactory(GsonConverterFactory.create())
+            .build();
 }

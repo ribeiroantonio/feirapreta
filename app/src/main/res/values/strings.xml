@@ -17,5 +17,7 @@
 
 
     <string name="copyrights">Todos os direitos reservados.</string>
+    <string name="menu_item_vote">Avalie a Feira</string>
 
+    <string name="hasVoted">false</string>
 </resources>

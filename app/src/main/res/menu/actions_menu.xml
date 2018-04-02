@@ -4,4 +4,6 @@
         android:title="@string/menu_item_settings" />
     <item android:id="@+id/about_menu_item"
         android:title="@string/menu_item_about" />
+    <item android:id="@+id/voting_menu_item"
+        android:title="@string/menu_item_vote"/>
 </menu>
