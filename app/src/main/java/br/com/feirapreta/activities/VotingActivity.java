@@ -44,77 +44,92 @@ public class VotingActivity extends AppCompatActivity {
 
     public void onClick(View v) {
 
-        if(!preferences.getBoolean("hasVoted", false)){
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        Float valor = ratingBar.getRating();
 
-            builder.setTitle("Confirmar Voto");
-            builder.setMessage("Você em certeza que deseja dar essa nota?");
+        if(valor >= 1){
+            if(!preferences.getBoolean("hasVoted", false)){
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
-            builder.setPositiveButton("Sim", new DialogInterface.OnClickListener() {
+                builder.setTitle("Confirmar Voto");
+                builder.setMessage("Você em certeza que deseja dar essa nota?");
 
-                public void onClick(DialogInterface dialog, int which) {
+                builder.setPositiveButton("Sim", new DialogInterface.OnClickListener() {
 
-                    Float value = ratingBar.getRating();
-                    voto.setValue(value);
-                    dialog = new ProgressDialog(VotingActivity.this);
+                    public void onClick(DialogInterface dialog, int which) {
 
-
-                    RetrofitService retrofitService = RetrofitService.retrofit.create(RetrofitService.class);
-
-
-                    final Call<ResponseBody> call = retrofitService.voting(voto);
+                        Float value = ratingBar.getRating();
+                        voto.setValue(value);
+                        dialog = new ProgressDialog(VotingActivity.this);
 
 
-                    call.enqueue(new Callback<ResponseBody>() {
-                        @Override
+                        RetrofitService retrofitService = RetrofitService.retrofit.create(RetrofitService.class);
 
 
-                        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                        final Call<ResponseBody> call = retrofitService.voting(voto);
 
-                            if (response.code() == 200) {
-                                editor = preferences.edit();
-                                editor.putBoolean("hasVoted", true);
-                                editor.apply();
-                                Toast.makeText(getBaseContext(), "Voto Enviado com sucesso", Toast.LENGTH_SHORT).show();
-                            } else {
-                                Toast.makeText(VotingActivity.this, "Não foi possível completar seu voto. Por favor, tente novamente.", Toast.LENGTH_SHORT).show();
+
+                        call.enqueue(new Callback<ResponseBody>() {
+                            @Override
+
+
+                            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+
+                                if (response.code() == 200) {
+                                    editor = preferences.edit();
+                                    editor.putBoolean("hasVoted", true);
+                                    editor.apply();
+                                    Toast.makeText(getBaseContext(), "Voto Enviado com sucesso", Toast.LENGTH_SHORT).show();
+                                } else {
+                                    Toast.makeText(VotingActivity.this, "Não foi possível completar seu voto. Por favor, tente novamente.", Toast.LENGTH_SHORT).show();
+                                }
+                                onBackPressed();
+                                finish();
+
+
                             }
-                            onBackPressed();
-                            finish();
 
+                            @Override
+                            public void onFailure(Call<ResponseBody> call, Throwable t) {
 
-                        }
+                                Toast.makeText(getBaseContext(), "Não foi possível fazer a conexão", Toast.LENGTH_SHORT).show();
 
-                        @Override
-                        public void onFailure(Call<ResponseBody> call, Throwable t) {
+                            }
+                        });
 
-                            Toast.makeText(getBaseContext(), "Não foi possível fazer a conexão", Toast.LENGTH_SHORT).show();
+                        dialog.dismiss();
 
+                    }
+                });
+
+                builder.setNegativeButton("Não", new DialogInterface.OnClickListener() {
+
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        // Do nothing
+                        dialog.dismiss();
+                    }
+                });
+
+                AlertDialog alert = builder.create();
+                alert.show();
+
+            }else{
+                Toast.makeText(this, "Desculpe, não é possível avaliar a feira mais de uma vez.", Toast.LENGTH_SHORT).show();
+                onBackPressed();
+                finish();
+            }
+        }else{
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setMessage(R.string.rating_min_message)
+                    .setCancelable(false)
+                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            dialog.dismiss();
                         }
                     });
-
-                    dialog.dismiss();
-
-                }
-            });
-
-            builder.setNegativeButton("Não", new DialogInterface.OnClickListener() {
-
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-
-                    // Do nothing
-                    dialog.dismiss();
-                }
-            });
-
             AlertDialog alert = builder.create();
             alert.show();
-
-        }else{
-            Toast.makeText(this, "Desculpe, não é possível avaliar a feira mais de uma vez.", Toast.LENGTH_SHORT).show();
-            onBackPressed();
-            finish();
         }
 
     }

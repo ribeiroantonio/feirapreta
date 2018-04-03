@@ -144,6 +144,7 @@
             android:layout_gravity="center"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="150dp"
             android:text="Houve um erro ao conectar-se aos nossos servidores" />
 
     </android.support.design.widget.CoordinatorLayout>

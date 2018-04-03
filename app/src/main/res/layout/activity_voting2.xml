@@ -50,7 +50,8 @@
             android:layout_centerHorizontal="true"
             android:layout_marginBottom="15dp"
             tools:layout_editor_absoluteX="72dp"
-            tools:layout_editor_absoluteY="228dp" />
+            tools:layout_editor_absoluteY="228dp"
+            android:stepSize="1.0"/>
 
         <Button
             android:id="@+id/button"

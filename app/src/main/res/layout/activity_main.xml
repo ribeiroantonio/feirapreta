@@ -103,7 +103,7 @@
             android:layout_gravity="center"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Não há resultados para sua busca" />
+            android:text="Não há destaques cadastrados!" />
 
         <ImageView
             android:id="@+id/image_no_connection_main"
@@ -134,6 +134,7 @@
             android:layout_gravity="center"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="150dp"
             android:text="Houve um erro ao conectar-se aos nossos servidores" />
 
     </android.support.design.widget.CoordinatorLayout>

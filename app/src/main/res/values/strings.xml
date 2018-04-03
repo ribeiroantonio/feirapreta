@@ -20,4 +20,6 @@
     <string name="menu_item_vote">Avalie a Feira</string>
 
     <string name="hasVoted">false</string>
+
+    <string name="rating_min_message">Por favor, escolha um valor de 1 a 5 estrelas.</string>
 </resources>
