@@ -1,6 +1,7 @@
 package br.com.feirapreta.activities;
 
 import android.annotation.TargetApi;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.ConnectivityManager;
@@ -17,6 +18,7 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
@@ -231,12 +233,19 @@ public class MainActivity extends AppCompatActivity implements PopupMenu.OnMenuI
         editTextSearch.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
-                if (i == EditorInfo.IME_ACTION_SEARCH) {
-                    searchedText = editTextSearch.getText().toString();
-                    Intent intent = new Intent(MainActivity.this, SearchResultsActivity.class);
-                    intent.putExtra("searchedText", searchedText);
-                    startActivity(intent);
-                    return true;
+
+                if(!editTextSearch.getText().toString().equals("")){
+                    if (i == EditorInfo.IME_ACTION_SEARCH) {
+                        searchedText = editTextSearch.getText().toString();
+                        Intent intent = new Intent(MainActivity.this, SearchResultsActivity.class);
+                        intent.putExtra("searchedText", searchedText);
+                        startActivity(intent);
+                        return true;
+                    }
+                }else {
+                    View view = getCurrentFocus();
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
                 }
                 return false;
             }

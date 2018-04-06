@@ -157,6 +157,44 @@ public class PostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
         return postsResults.get(position);
     }
 
+    private Post fetchPost(Result result){
+        Post post = new Post();
+        if (result != null){
+            if(result.getId() != null){
+                post.setId(result.getId());
+            }
+
+            if(result.getLink() != null){
+                post.setLink(result.getLink());
+            }
+
+            if(result.getImageLowResolution() != null){
+                post.setImageLowResolution(result.getImageLowResolution());
+            }
+
+            if(result.getImageStandardResolution() != null){
+                post.setImageStandardResolution(result.getImageStandardResolution());
+            }
+
+            if(result.getImageThumbnail() != null){
+                post.setImageThumbnail(result.getImageThumbnail());
+            }
+
+            if(result.getPerson() != null){
+                post.setPerson(result.getPerson());
+            }
+
+            if(result.getSubtitle() != null){
+                post.setSubtitle(result.getSubtitle());
+            }
+
+            if (result.getIsHighlight() != null){
+                post.setHighlight(result.getIsHighlight());
+            }
+        }
+        return post;
+    }
+
     /*
     View Holders
      */
@@ -172,7 +210,10 @@ public class PostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
                 public void onClick(View v) {
                     Intent details = new Intent(v.getContext(), DetailsActivity.class);
                     details.putExtra("post_id", postsResults.get(getAdapterPosition()).getId());
-                    details.putExtra("post", postsResults.get(getAdapterPosition()));
+
+                    Post post = fetchPost(postsResults.get(getAdapterPosition()));
+
+                    details.putExtra("post", post);
                     v.getContext().startActivity(details);
                 }
             });

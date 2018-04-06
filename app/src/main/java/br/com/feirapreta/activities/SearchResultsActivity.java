@@ -45,7 +45,6 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class SearchResultsActivity extends AppCompatActivity {
 
-    private ArrayList<Post> allPosts = new ArrayList<>();
     private boolean isDemand;
     private EditText editTextSearch;
     private String searchedText;
@@ -68,7 +67,7 @@ public class SearchResultsActivity extends AppCompatActivity {
     // If current page is the last page (Pagination will stop after this page load)
     private boolean isLastPage = false;
     // total no. of pages to load. Initial load is page 0, after which 2 more pages will load.
-    private int TOTAL_PAGES = 3;
+    private int TOTAL_PAGES;
     // indicates the current page which Pagination is fetching.
     private int currentPage = PAGE_START;
     // indicates the amount of items
@@ -129,23 +128,19 @@ public class SearchResultsActivity extends AppCompatActivity {
                 currentPage = PAGE_START;
                 isLoading = false;
                 isLastPage = false;
-                if(!isDemand){
-                    adapter.clear();
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            loadRV();
-                        }
-                    }, 1000);
-                }else{
-                    loadRV();
-                }
+                adapter.clear();
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        loadRV();
+                    }
+                }, 1000);
                 swipeRefreshLayout.setRefreshing(false);
             }
         });
     }
 
-    private void hideEmptyStates(){
+    private void hideEmptyStates() {
         emptyResults.setVisibility(View.GONE);
         noConnection.setVisibility(View.GONE);
         connectionError.setVisibility(View.GONE);
@@ -158,28 +153,35 @@ public class SearchResultsActivity extends AppCompatActivity {
         editTextSearch.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
-                if (i == EditorInfo.IME_ACTION_SEARCH) {
+                if(!editTextSearch.getText().toString().equals("")){
+                    if (i == EditorInfo.IME_ACTION_SEARCH) {
+                        View view = getCurrentFocus();
+                        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                        progressBar.setVisibility(View.VISIBLE);
+                        searchedText = editTextSearch.getText().toString();
+                        if (getIntent().getStringExtra("searchedText") != null) {
+                            getIntent().removeExtra("searchedText");
+                            getIntent().putExtra("searchedText", searchedText);
+                        }
+                        currentPage = PAGE_START;
+                        isLoading = false;
+                        isLastPage = false;
+                        adapter.clear();
+                        loadRV();
+                        return true;
+                    }
+                }else {
                     View view = getCurrentFocus();
                     InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-                    progressBar.setVisibility(View.VISIBLE);
-                    searchedText = editTextSearch.getText().toString();
-                    if (getIntent().getStringExtra("searchedText") != null) {
-                        getIntent().removeExtra("searchedText");
-                        getIntent().putExtra("searchedText", searchedText);
-                    }
-                    currentPage = PAGE_START;
-                    isLoading = false;
-                    isLastPage = false;
-                    loadRV();
-                    return true;
                 }
                 return false;
             }
         });
     }
 
-    private ArrayList<Result> fetchResults(Response<PaginatedPosts> response){
+    private ArrayList<Result> fetchResults(Response<PaginatedPosts> response) {
         PaginatedPosts paginatedPosts = response.body();
         return paginatedPosts != null ? paginatedPosts.getPublicacao().getResult() : new ArrayList<Result>();
     }
@@ -237,20 +239,15 @@ public class SearchResultsActivity extends AppCompatActivity {
                     return isLoading;
                 }
             });
-
             loadFirstPage();
         } else {
-            loadFirstPage();
-        }
-    }
 
-    private void loadAllPosts() {
-        hideEmptyStates();
+        }
     }
 
     private void loadFirstPage() {
 
-        if(isNetworkAvailable()){
+        if (isNetworkAvailable()) {
             Retrofit retrofit = new Retrofit.Builder()
                     .addConverterFactory(GsonConverterFactory.create())
                     .baseUrl(RetrofitService.BASE_URL)
@@ -262,11 +259,12 @@ public class SearchResultsActivity extends AppCompatActivity {
                 @Override
                 public void onResponse(Call<PaginatedPosts> call, Response<PaginatedPosts> response) {
                     TOTAL_PAGES = response.body().getPage().getTotalPages();
+                    Log.e("TAG", "TOTALPAGES:" + TOTAL_PAGES);
                     ArrayList<Result> posts = fetchResults(response);
                     progressBar.setVisibility(View.GONE);
                     adapter.addAll(posts);
 
-                    if(currentPage <= TOTAL_PAGES) adapter.addLoadingFooter();
+                    if (currentPage < TOTAL_PAGES) adapter.addLoadingFooter();
                     else isLastPage = true;
                 }
 
@@ -274,8 +272,8 @@ public class SearchResultsActivity extends AppCompatActivity {
                 public void onFailure(Call<PaginatedPosts> call, Throwable t) {
 
                 }
-            });    
-        }else{
+            });
+        } else {
             Toast.makeText(this, "erro1", Toast.LENGTH_SHORT).show();
         }
 
@@ -283,7 +281,7 @@ public class SearchResultsActivity extends AppCompatActivity {
 
     private void loadNextPage() {
 
-        if(isNetworkAvailable()){
+        if (isNetworkAvailable()) {
             Retrofit retrofit = new Retrofit.Builder()
                     .addConverterFactory(GsonConverterFactory.create())
                     .baseUrl(RetrofitService.BASE_URL)
@@ -300,7 +298,7 @@ public class SearchResultsActivity extends AppCompatActivity {
                     ArrayList<Result> posts = fetchResults(response);
                     adapter.addAll(posts);
 
-                    if(currentPage < TOTAL_PAGES) adapter.addLoadingFooter();
+                    if (currentPage < TOTAL_PAGES) adapter.addLoadingFooter();
                     else isLastPage = true;
                 }
 
@@ -309,7 +307,7 @@ public class SearchResultsActivity extends AppCompatActivity {
 
                 }
             });
-        }else{
+        } else {
             Toast.makeText(this, "erro", Toast.LENGTH_SHORT).show();
         }
     }
