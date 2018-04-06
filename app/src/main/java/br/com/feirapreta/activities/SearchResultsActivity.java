@@ -153,6 +153,7 @@ public class SearchResultsActivity extends AppCompatActivity {
         editTextSearch.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
+                hideEmptyStates();
                 if(!editTextSearch.getText().toString().equals("")){
                     if (i == EditorInfo.IME_ACTION_SEARCH) {
                         View view = getCurrentFocus();
