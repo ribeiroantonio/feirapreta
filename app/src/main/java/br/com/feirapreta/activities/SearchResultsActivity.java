@@ -82,7 +82,7 @@ public class SearchResultsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_search_results);
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        isDemand = preferences.getBoolean("search_demand", false);
+        isDemand = preferences.getBoolean("search_demand", true);
         Fresco.initialize(this);
 
         initViews();
@@ -258,19 +258,27 @@ public class SearchResultsActivity extends AppCompatActivity {
             call.enqueue(new Callback<PaginatedPosts>() {
                 @Override
                 public void onResponse(Call<PaginatedPosts> call, Response<PaginatedPosts> response) {
-                    TOTAL_PAGES = response.body().getPage().getTotalPages();
-                    Log.e("TAG", "TOTALPAGES:" + TOTAL_PAGES);
-                    ArrayList<Result> posts = fetchResults(response);
-                    progressBar.setVisibility(View.GONE);
-                    adapter.addAll(posts);
+                    if(response.code() == 200){
+                        TOTAL_PAGES = response.body().getPage().getTotalPages();
+                        Log.e("TAG", "TOTALPAGES:" + TOTAL_PAGES);
+                        ArrayList<Result> posts = fetchResults(response);
+                        progressBar.setVisibility(View.GONE);
+                        adapter.addAll(posts);
+                        if(posts.isEmpty()){
+                            imageEmptyResults.setVisibility(View.VISIBLE);
+                            emptyResults.setVisibility(View.VISIBLE);
+                        }
+                        if (currentPage < TOTAL_PAGES) adapter.addLoadingFooter();
+                        else isLastPage = true;
+                    }else{
 
-                    if (currentPage < TOTAL_PAGES) adapter.addLoadingFooter();
-                    else isLastPage = true;
+                    }
                 }
 
                 @Override
                 public void onFailure(Call<PaginatedPosts> call, Throwable t) {
-
+                    imageServerError.setVisibility(View.VISIBLE);
+                    connectionError.setVisibility(View.VISIBLE);
                 }
             });
         } else {

@@ -7,7 +7,7 @@
         >
 
         <CheckBoxPreference android:title="@string/pref_network_title_checkbox"
-            android:defaultValue="false"
+            android:defaultValue="true"
             android:summary="@string/pref_summary_checkbox_network"
             android:key="search_demand" />
 

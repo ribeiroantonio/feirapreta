@@ -25,7 +25,6 @@ import br.com.feirapreta.model.RetrofitService;
 
 public class VotingActivity extends AppCompatActivity {
 
-
     RatingBar ratingBar;
     private ProgressDialog dialog;
     private Vote voto = new Vote();
@@ -41,13 +40,11 @@ public class VotingActivity extends AppCompatActivity {
         preferences = PreferenceManager.getDefaultSharedPreferences(this);
     }
 
-
     public void onClick(View v) {
 
         Float valor = ratingBar.getRating();
 
         if(valor >= 1){
-            if(!preferences.getBoolean("hasVoted", false)){
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
                 builder.setTitle("Confirmar Voto");
@@ -61,16 +58,12 @@ public class VotingActivity extends AppCompatActivity {
                         voto.setValue(value);
                         dialog = new ProgressDialog(VotingActivity.this);
 
-
                         RetrofitService retrofitService = RetrofitService.retrofit.create(RetrofitService.class);
-
 
                         final Call<ResponseBody> call = retrofitService.voting(voto);
 
-
                         call.enqueue(new Callback<ResponseBody>() {
                             @Override
-
 
                             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
 
@@ -82,9 +75,8 @@ public class VotingActivity extends AppCompatActivity {
                                 } else {
                                     Toast.makeText(VotingActivity.this, "Não foi possível completar seu voto. Por favor, tente novamente.", Toast.LENGTH_SHORT).show();
                                 }
-                                onBackPressed();
-                                finish();
-
+                                //onBackPressed();
+                                //finish();
 
                             }
 
@@ -119,18 +111,6 @@ public class VotingActivity extends AppCompatActivity {
                 onBackPressed();
                 finish();
             }
-        }else{
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setMessage(R.string.rating_min_message)
-                    .setCancelable(false)
-                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            dialog.dismiss();
-                        }
-                    });
-            AlertDialog alert = builder.create();
-            alert.show();
-        }
 
     }
 
