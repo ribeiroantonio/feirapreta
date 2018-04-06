@@ -242,7 +242,10 @@ public class SearchResultsActivity extends AppCompatActivity {
             });
             loadFirstPage();
         } else {
-
+            loadFirstPage();
+            while (currentPage < TOTAL_PAGES){
+                loadNextPage();
+            }
         }
     }
 
