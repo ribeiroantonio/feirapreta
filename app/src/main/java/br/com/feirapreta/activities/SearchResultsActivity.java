@@ -27,15 +27,16 @@ import android.widget.Toast;
 
 import com.facebook.drawee.backends.pipeline.Fresco;
 
-import org.w3c.dom.Text;
-
 import java.util.ArrayList;
+import java.util.List;
 
 import br.com.feirapreta.R;
 import br.com.feirapreta.Utils.PaginationScrollListener;
 import br.com.feirapreta.adapter.PostsAdapter;
 import br.com.feirapreta.model.Post;
 import br.com.feirapreta.model.RetrofitService;
+import br.com.feirapreta.model.search.PaginatedPosts;
+import br.com.feirapreta.model.search.Result;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -178,6 +179,11 @@ public class SearchResultsActivity extends AppCompatActivity {
         });
     }
 
+    private ArrayList<Result> fetchResults(Response<PaginatedPosts> response){
+        PaginatedPosts paginatedPosts = response.body();
+        return paginatedPosts != null ? paginatedPosts.getPublicacao().getResult() : new ArrayList<Result>();
+    }
+
     private void loadRV() {
         recyclerView = findViewById(R.id.rvSearchResults);
 
@@ -232,128 +238,79 @@ public class SearchResultsActivity extends AppCompatActivity {
                 }
             });
 
-            loadAllPosts();
+            loadFirstPage();
         } else {
-            loadAllPosts();
+            loadFirstPage();
         }
     }
 
     private void loadAllPosts() {
         hideEmptyStates();
-        if(isNetworkAvailable()) {
-                Retrofit retrofit = new Retrofit.Builder()
-                        .baseUrl(RetrofitService.BASE_URL)
-                        .addConverterFactory(GsonConverterFactory.create())
-                        .build();
-
-                RetrofitService request = retrofit.create(RetrofitService.class);
-                Call<ArrayList<Post>> call = request.searchByTag(searchedText);
-                call.enqueue(new Callback<ArrayList<Post>>() {
-                    @Override
-                    public void onResponse(Call<ArrayList<Post>> call, Response<ArrayList<Post>> response) {
-                        if (response.code() == 200) {
-                            allPosts = response.body();
-                            if (isDemand) {
-                                TOTAL_COUNT = allPosts.size();
-                                TOTAL_PAGES = (TOTAL_COUNT + AMOUNT_BY_PAGE - 1) / AMOUNT_BY_PAGE;
-                                loadFirstPage();
-                            } else {
-                                progressBar.setVisibility(View.GONE);
-                                adapter.addAll(allPosts);
-                                if(allPosts.isEmpty()){
-                                    emptyResults.setVisibility(View.VISIBLE);
-                                    imageEmptyResults.setVisibility(View.VISIBLE);
-                                }
-                            }
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(Call<ArrayList<Post>> call, Throwable t) {
-                        Log.e("TAG", "" + t.getCause());
-                        if(t.getMessage() != null && t.getMessage().contains("Expected BEGIN_ARRAY")){
-                            emptyResults.setVisibility(View.VISIBLE);
-                            imageEmptyResults.setVisibility(View.VISIBLE);
-                        }else{
-                            imageServerError.setVisibility(View.VISIBLE);
-                            Toast.makeText(SearchResultsActivity.this, R.string.server_error_message, Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
-        }else {
-            progressBar.setVisibility(View.GONE);
-            noConnection.setVisibility(View.VISIBLE);
-            imageNoConnection.setVisibility(View.VISIBLE);
-            Toast.makeText(this, R.string.connection_error_message, Toast.LENGTH_SHORT).show();
-        }
-
     }
 
     private void loadFirstPage() {
-        ArrayList<Post> firstPage = new ArrayList<>();
-        if (!allPosts.isEmpty()) {
-            if (AMOUNT_BY_PAGE <= allPosts.size()) {
-                int to = currentPage * AMOUNT_BY_PAGE;
-                int from = to - AMOUNT_BY_PAGE;
-                for (int i = from; i < to; i++) {
-                    firstPage.add(allPosts.get(i));
+
+        if(isNetworkAvailable()){
+            Retrofit retrofit = new Retrofit.Builder()
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .baseUrl(RetrofitService.BASE_URL)
+                    .build();
+
+            RetrofitService request = retrofit.create(RetrofitService.class);
+            Call<PaginatedPosts> call = request.paginatedSearch(searchedText, currentPage);
+            call.enqueue(new Callback<PaginatedPosts>() {
+                @Override
+                public void onResponse(Call<PaginatedPosts> call, Response<PaginatedPosts> response) {
+                    TOTAL_PAGES = response.body().getPage().getTotalPages();
+                    ArrayList<Result> posts = fetchResults(response);
+                    progressBar.setVisibility(View.GONE);
+                    adapter.addAll(posts);
+
+                    if(currentPage <= TOTAL_PAGES) adapter.addLoadingFooter();
+                    else isLastPage = true;
                 }
 
-                progressBar.setVisibility(View.GONE);
-                adapter.addAll(firstPage);
+                @Override
+                public void onFailure(Call<PaginatedPosts> call, Throwable t) {
 
-                if (currentPage <= TOTAL_PAGES && AMOUNT_BY_PAGE != allPosts.size()){
-                    adapter.addLoadingFooter();
-                } else{
-                    isLastPage = true;
                 }
-            } else {
-                int to = allPosts.size();
-                int from = 0;
-                for (int i = from; i < to; i++) {
-                    firstPage.add(allPosts.get(i));
-                }
-                isLastPage = true;
-                progressBar.setVisibility(View.GONE);
-                adapter.addAll(firstPage);
-            }
-
-        } else {
-            progressBar.setVisibility(View.GONE);
-            emptyResults.setVisibility(View.VISIBLE);
-            imageEmptyResults.setVisibility(View.VISIBLE);
-            Toast.makeText(this, "Desculpe, não há resultados que correspondem a sua pesquisa", Toast.LENGTH_SHORT).show();
+            });    
+        }else{
+            Toast.makeText(this, "erro1", Toast.LENGTH_SHORT).show();
         }
 
     }
 
     private void loadNextPage() {
 
-        if (!isLastPage) {
+        if(isNetworkAvailable()){
+            Retrofit retrofit = new Retrofit.Builder()
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .baseUrl(RetrofitService.BASE_URL)
+                    .build();
 
-            int from = adapter.getItemCount();
-            int to;
-            if (allPosts.size() - from >= AMOUNT_BY_PAGE) {
-                to = currentPage * AMOUNT_BY_PAGE;
-            } else {
-                to = allPosts.size();
-            }
-            ArrayList<Post> nextPage = new ArrayList<>();
-            for (int i = from; i < to; i++) {
-                nextPage.add(allPosts.get(i));
-            }
+            RetrofitService request = retrofit.create(RetrofitService.class);
+            Call<PaginatedPosts> call = request.paginatedSearch(searchedText, currentPage);
+            call.enqueue(new Callback<PaginatedPosts>() {
+                @Override
+                public void onResponse(Call<PaginatedPosts> call, Response<PaginatedPosts> response) {
+                    adapter.removeLoadingFooter();
+                    isLoading = false;
 
-            adapter.removeLoadingFooter();
-            isLoading = false;
+                    ArrayList<Result> posts = fetchResults(response);
+                    adapter.addAll(posts);
 
-            adapter.addAll(nextPage);
+                    if(currentPage < TOTAL_PAGES) adapter.addLoadingFooter();
+                    else isLastPage = true;
+                }
 
-            if (currentPage != TOTAL_PAGES){
-                adapter.addLoadingFooter();
-            } else {
-                isLastPage = true;
-            }
+                @Override
+                public void onFailure(Call<PaginatedPosts> call, Throwable t) {
 
+                }
+            });
+        }else{
+            Toast.makeText(this, "erro", Toast.LENGTH_SHORT).show();
         }
     }
 

@@ -9,7 +9,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 
 import com.facebook.drawee.view.SimpleDraweeView;
 
@@ -18,6 +17,7 @@ import java.util.ArrayList;
 import br.com.feirapreta.R;
 import br.com.feirapreta.activities.DetailsActivity;
 import br.com.feirapreta.model.Post;
+import br.com.feirapreta.model.search.Result;
 
 /**
  * Created by WEB on 07/03/2018.
@@ -29,22 +29,22 @@ public class PostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
     protected static final int LOADING = 1;
 
     private static Intent intent = new Intent(Intent.ACTION_VIEW);
-    private ArrayList<Post> posts;
+    private ArrayList<Result> postsResults;
     private Context context;
 
     private boolean isLoadingAdded = false;
 
     public PostsAdapter(Context context) {
         this.context = context;
-        posts = new ArrayList<>();
+        postsResults = new ArrayList<>();
     }
 
-    public ArrayList<Post> getPosts(){
-        return posts;
+    public ArrayList<Result> getPostsResults(){
+        return postsResults;
     }
 
-    public void setPosts(ArrayList<Post> posts){
-        this.posts = posts;
+    public void setPostsResults(ArrayList<Result> postsResults){
+        this.postsResults = postsResults;
     }
 
     @Override
@@ -74,14 +74,14 @@ public class PostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        Post post = posts.get(position);
+        Result post = postsResults.get(position);
 
         switch (getItemViewType(position)){
             case ITEM:
                 PostVH postVH = (PostVH) holder;
 
-                if(posts.get(position).getImageLowResolution() != null){
-                    Uri image = Uri.parse(posts.get(position).getImageLowResolution());
+                if(postsResults.get(position).getImageLowResolution() != null){
+                    Uri image = Uri.parse(postsResults.get(position).getImageLowResolution());
                     postVH.imageView.setImageURI(image);
                 }
 
@@ -94,33 +94,33 @@ public class PostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
 
     @Override
     public int getItemCount() {
-        return posts == null ? 0 : posts.size();
+        return postsResults == null ? 0 : postsResults.size();
     }
 
     @Override
     public int getItemViewType(int position) {
-        return (position == posts.size() - 1 && isLoadingAdded) ? LOADING : ITEM;
+        return (position == postsResults.size() - 1 && isLoadingAdded) ? LOADING : ITEM;
     }
 
     /*
     Helpers
      */
 
-    public void add(Post pc){
-        posts.add(pc);
-        notifyItemInserted(posts.size() - 1);
+    public void add(Result pc){
+        postsResults.add(pc);
+        notifyItemInserted(postsResults.size() - 1);
     }
 
-    public void addAll(ArrayList<Post> pcList){
-        for(Post pc: pcList){
+    public void addAll(ArrayList<Result> pcList){
+        for(Result pc: pcList){
             add(pc);
         }
     }
 
-    public void remove(Post post){
-        int position = posts.indexOf(post);
+    public void remove(Result post){
+        int position = postsResults.indexOf(post);
         if(position > -1){
-            posts.remove(position);
+            postsResults.remove(position);
             notifyItemRemoved(position);
         }
     }
@@ -138,23 +138,23 @@ public class PostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
 
     public void addLoadingFooter(){
         isLoadingAdded = true;
-        add(new Post());
+        add(new Result());
     }
 
     public void removeLoadingFooter(){
         isLoadingAdded = false;
 
-        int position = posts.size() - 1;
-        Post item = getItem(position);
+        int position = postsResults.size() - 1;
+        Result item = getItem(position);
 
         if(item != null){
-            posts.remove(position);
+            postsResults.remove(position);
             notifyItemRemoved(position);
         }
     }
 
-    public Post getItem(int position){
-        return posts.get(position);
+    public Result getItem(int position){
+        return postsResults.get(position);
     }
 
     /*
@@ -171,8 +171,8 @@ public class PostsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
                 @Override
                 public void onClick(View v) {
                     Intent details = new Intent(v.getContext(), DetailsActivity.class);
-                    details.putExtra("post_id", posts.get(getAdapterPosition()).getId());
-                    details.putExtra("post", posts.get(getAdapterPosition()));
+                    details.putExtra("post_id", postsResults.get(getAdapterPosition()).getId());
+                    details.putExtra("post", postsResults.get(getAdapterPosition()));
                     v.getContext().startActivity(details);
                 }
             });

@@ -3,6 +3,8 @@ package br.com.feirapreta.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import br.com.feirapreta.model.search.PaginatedPosts;
+import br.com.feirapreta.model.search.Result;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -31,6 +33,9 @@ public interface RetrofitService {
 
     @GET("publication/search/{searchedText}")
     Call<ArrayList<Post>> searchByTag(@Path(value = "searchedText") String searchedText);
+
+    @GET("publication/search/{searchedText}/{pageNumber}")
+    Call<PaginatedPosts> paginatedSearch(@Path(value = "searchedText") String searchedText, @Path(value="pageNumber") int pageNumber);
 
     @GET("publication/{postId}")
     Call<Post> readPost(@Path(value = "postId") String postId);
