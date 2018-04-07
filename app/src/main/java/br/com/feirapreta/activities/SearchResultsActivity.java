@@ -243,8 +243,8 @@ public class SearchResultsActivity extends AppCompatActivity {
             loadFirstPage();
         } else {
             loadFirstPage();
-            while (currentPage < TOTAL_PAGES){
-                loadNextPage();
+            while (currentPage <= TOTAL_PAGES){
+                loadNextPages();
             }
         }
     }
@@ -293,6 +293,38 @@ public class SearchResultsActivity extends AppCompatActivity {
 
     private void loadNextPage() {
 
+        if (isNetworkAvailable()) {
+            Retrofit retrofit = new Retrofit.Builder()
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .baseUrl(RetrofitService.BASE_URL)
+                    .build();
+
+            RetrofitService request = retrofit.create(RetrofitService.class);
+            Call<PaginatedPosts> call = request.paginatedSearch(searchedText, currentPage);
+            call.enqueue(new Callback<PaginatedPosts>() {
+                @Override
+                public void onResponse(Call<PaginatedPosts> call, Response<PaginatedPosts> response) {
+                    adapter.removeLoadingFooter();
+                    isLoading = false;
+
+                    ArrayList<Result> posts = fetchResults(response);
+                    adapter.addAll(posts);
+
+                    if (currentPage < TOTAL_PAGES) adapter.addLoadingFooter();
+                    else isLastPage = true;
+                }
+
+                @Override
+                public void onFailure(Call<PaginatedPosts> call, Throwable t) {
+
+                }
+            });
+        } else {
+            Toast.makeText(this, "erro", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void loadNextPages(){
         if (isNetworkAvailable()) {
             Retrofit retrofit = new Retrofit.Builder()
                     .addConverterFactory(GsonConverterFactory.create())
